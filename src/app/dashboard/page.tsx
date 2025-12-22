@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   Box,
@@ -11,6 +12,11 @@ import {
   Card,
   CardContent,
   CircularProgress,
+  ToggleButtonGroup,
+  ToggleButton,
+  Avatar,
+  Rating,
+  Chip,
 } from '@mui/material';
 import {
   LocalParkingOutlined,
@@ -18,6 +24,10 @@ import {
   AttachMoneyOutlined,
   StarOutlined,
 } from '@mui/icons-material';
+import { supabase } from '@/lib/supabaseClient';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { format, subDays, startOfDay } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 interface DashboardStats {
   totalEstacionamientos: number;
@@ -26,28 +36,217 @@ interface DashboardStats {
   calificacionPromedio: number;
 }
 
+interface UserProfile {
+  nombre: string | null;
+  email: string | null;
+}
+
+interface IngresosDiarios {
+  fecha: string;
+  ingresos: number;
+}
+
+interface Resena {
+  id: string;
+  usuario_nombre: string;
+  calificacion: number;
+  comentario: string;
+  created_at: string;
+  estacionamiento_nombre: string;
+  respondida: boolean;
+}
+
 export default function DashboardPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState<UserProfile>({ nombre: null, email: null });
   const [stats, setStats] = useState<DashboardStats>({
     totalEstacionamientos: 0,
     reservasActivas: 0,
     ingresosMes: 0,
     calificacionPromedio: 0,
   });
+  const [periodo, setPeriodo] = useState<'7' | '15' | '30' | '90'>('30');
+  const [ingresosDiarios, setIngresosDiarios] = useState<IngresosDiarios[]>([]);
+  const [resenas, setResenas] = useState<Resena[]>([]);
 
   useEffect(() => {
-    // Simular carga de datos
-    setTimeout(() => {
-      setStats({
-        totalEstacionamientos: 0,
-        reservasActivas: 0,
-        ingresosMes: 0,
-        calificacionPromedio: 0,
+    if (user) {
+      loadDashboardData();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user && stats.totalEstacionamientos > 0) {
+      loadIngresosDiarios();
+    }
+  }, [user, periodo, stats.totalEstacionamientos]);
+
+  const loadDashboardData = async () => {
+    if (!user) return;
+
+    try {
+      // Get user profile with nombre from public.users
+      const { data: userData } = await supabase
+        .from('users')
+        .select('nombre')
+        .eq('id', user.id)
+        .single();
+
+      // Fallback: Si no hay nombre en public.users, buscar en auth metadata
+      let nombreUsuario = (userData as any)?.nombre;
+      
+      if (!nombreUsuario) {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        nombreUsuario = authUser?.user_metadata?.nombre || null;
+      }
+
+      // Extraer solo el primer nombre
+      const primerNombre = nombreUsuario 
+        ? nombreUsuario.split(' ')[0] 
+        : null;
+
+      setUserProfile({
+        nombre: primerNombre,
+        email: user.email || null,
       });
+
+      // Get total estacionamientos
+      const { count: totalEstacionamientos } = await supabase
+        .from('estacionamientos')
+        .select('*', { count: 'exact', head: true })
+        .eq('propietario_id', user.id);
+
+      // Get reservas activas (confirmadas)
+      const { count: reservasActivas } = await supabase
+        .from('reservas')
+        .select('*, estacionamientos!inner(*)', { count: 'exact', head: true })
+        .eq('estacionamientos.propietario_id', user.id)
+        .eq('estado', 'confirmada');
+
+      // Get ingresos del mes (reservas completadas este mes)
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const { data: ingresoData } = await supabase
+        .from('reservas')
+        .select('monto_estacionamiento, estacionamientos!inner(propietario_id)')
+        .eq('estacionamientos.propietario_id', user.id)
+        .eq('estado', 'completada')
+        .gte('completada_en', startOfMonth.toISOString());
+
+      const ingresosMes = ingresoData?.reduce((sum, r: any) => sum + (parseFloat(r.monto_estacionamiento?.toString() || '0')), 0) || 0;
+
+      // Get calificacion promedio
+      const { data: estacionamientosData } = await supabase
+        .from('estacionamientos')
+        .select('calificacion_promedio')
+        .eq('propietario_id', user.id);
+
+      const calificaciones = estacionamientosData?.map((e: any) => parseFloat(e.calificacion_promedio?.toString() || '0')).filter(c => c > 0) || [];
+      const calificacionPromedio = calificaciones.length > 0
+        ? calificaciones.reduce((sum, c) => sum + c, 0) / calificaciones.length
+        : 0;
+
+      setStats({
+        totalEstacionamientos: totalEstacionamientos || 0,
+        reservasActivas: reservasActivas || 0,
+        ingresosMes: Math.round(ingresosMes),
+        calificacionPromedio,
+      });
+
+      // Load reseñas si hay estacionamientos
+      if (totalEstacionamientos && totalEstacionamientos > 0) {
+        await loadResenas();
+      }
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+    } finally {
       setLoading(false);
-    }, 500);
-  }, []);
+    }
+  };
+
+  const loadIngresosDiarios = async () => {
+    if (!user) return;
+
+    try {
+      const dias = parseInt(periodo);
+      const fechaInicio = startOfDay(subDays(new Date(), dias - 1));
+
+      const { data: reservasData } = await supabase
+        .from('reservas')
+        .select('monto_estacionamiento, completada_en, estacionamientos!inner(propietario_id)')
+        .eq('estacionamientos.propietario_id', user.id)
+        .eq('estado', 'completada')
+        .gte('completada_en', fechaInicio.toISOString())
+        .order('completada_en', { ascending: true });
+
+      // Agrupar por día
+      const ingresosPorDia: { [key: string]: number } = {};
+      
+      // Inicializar todos los días con 0
+      for (let i = 0; i < dias; i++) {
+        const fecha = format(subDays(new Date(), dias - 1 - i), 'yyyy-MM-dd');
+        ingresosPorDia[fecha] = 0;
+      }
+
+      // Sumar ingresos
+      reservasData?.forEach((reserva: any) => {
+        const fecha = format(new Date(reserva.completada_en), 'yyyy-MM-dd');
+        const monto = parseFloat(reserva.monto_estacionamiento?.toString() || '0');
+        if (ingresosPorDia[fecha] !== undefined) {
+          ingresosPorDia[fecha] += monto;
+        }
+      });
+
+      // Convertir a array
+      const ingresosDiariosArray: IngresosDiarios[] = Object.entries(ingresosPorDia).map(([fecha, ingresos]) => ({
+        fecha: format(new Date(fecha), dias <= 15 ? 'dd MMM' : 'dd/MM', { locale: es }),
+        ingresos: Math.round(ingresos),
+      }));
+
+      setIngresosDiarios(ingresosDiariosArray);
+    } catch (error) {
+      console.error('Error loading ingresos diarios:', error);
+    }
+  };
+
+  const loadResenas = async () => {
+    if (!user) return;
+
+    try {
+      const { data: resenasData } = await supabase
+        .from('resenas')
+        .select(`
+          id,
+          calificacion,
+          comentario,
+          created_at,
+          respondida,
+          usuario:users!resenas_usuario_id_fkey(nombre),
+          estacionamiento:estacionamientos!resenas_estacionamiento_id_fkey(nombre, propietario_id)
+        `)
+        .eq('estacionamiento.propietario_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      const resenasFormateadas: Resena[] = (resenasData || []).map((r: any) => ({
+        id: r.id,
+        usuario_nombre: r.usuario?.nombre || 'Usuario anónimo',
+        calificacion: r.calificacion,
+        comentario: r.comentario,
+        created_at: r.created_at,
+        estacionamiento_nombre: r.estacionamiento?.nombre || '',
+        respondida: r.respondida || false,
+      }));
+
+      setResenas(resenasFormateadas);
+    } catch (error) {
+      console.error('Error loading reseñas:', error);
+    }
+  };
 
   if (loading) {
     return (
@@ -69,7 +268,7 @@ export default function DashboardPage() {
       {/* Header */}
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" sx={{ fontWeight: 600, color: '#2D3748', mb: 1 }}>
-          ¡Bienvenido, {user?.email}! 👋
+          ¡Bienvenido, {userProfile.nombre || userProfile.email || 'Usuario'}! 👋
         </Typography>
         <Typography variant="body1" color="text.secondary">
           Este es tu panel de control. Aquí podrás gestionar tus estacionamientos.
@@ -84,7 +283,14 @@ export default function DashboardPage() {
             sx={{
               background: 'linear-gradient(135deg, #00B4D8 0%, #0077B6 100%)',
               color: 'white',
+              cursor: 'pointer',
+              transition: 'transform 0.2s, box-shadow 0.2s',
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 8px 16px rgba(0,180,216,0.3)',
+              },
             }}
+            onClick={() => router.push('/dashboard/estacionamientos')}
           >
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -108,7 +314,14 @@ export default function DashboardPage() {
             sx={{
               background: 'linear-gradient(135deg, #38A169 0%, #2F855A 100%)',
               color: 'white',
+              cursor: 'pointer',
+              transition: 'transform 0.2s, box-shadow 0.2s',
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 8px 16px rgba(56,161,105,0.3)',
+              },
             }}
+            onClick={() => router.push('/dashboard/reservas')}
           >
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -132,7 +345,14 @@ export default function DashboardPage() {
             sx={{
               background: 'linear-gradient(135deg, #F6AD55 0%, #ED8936 100%)',
               color: 'white',
+              cursor: 'pointer',
+              transition: 'transform 0.2s, box-shadow 0.2s',
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 8px 16px rgba(246,173,85,0.3)',
+              },
             }}
+            onClick={() => router.push('/dashboard/ingresos')}
           >
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -156,7 +376,14 @@ export default function DashboardPage() {
             sx={{
               background: 'linear-gradient(135deg, #4299E1 0%, #3182CE 100%)',
               color: 'white',
+              cursor: 'pointer',
+              transition: 'transform 0.2s, box-shadow 0.2s',
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 8px 16px rgba(66,153,225,0.3)',
+              },
             }}
+            onClick={() => router.push('/dashboard/resenas')}
           >
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -175,25 +402,146 @@ export default function DashboardPage() {
         </Grid>
       </Grid>
 
-      {/* Mensaje de Bienvenida */}
-      <Paper sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
-          🎉 ¡Sistema de Gestión Operativo!
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Tu cuenta está configurada correctamente. Ahora puedes comenzar a gestionar tus
-          estacionamientos.
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          <strong>Próximos pasos:</strong>
-          <br />
-          1. Agregar tu primer estacionamiento
-          <br />
-          2. Configurar horarios y tarifas
-          <br />
-          3. Vincular tu cuenta de Mercado Pago
-        </Typography>
-      </Paper>
+      {/* Contenido Condicional */}
+      {stats.totalEstacionamientos === 0 ? (
+        /* Mensaje de Bienvenida para nuevos usuarios */
+        <Paper sx={{ p: 4, textAlign: 'center' }}>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            Tu cuenta está configurada correctamente. Ahora puedes comenzar a gestionar tus
+            estacionamientos.
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            <strong>Próximos pasos:</strong>
+            <br />
+            1. Agregar tu primer estacionamiento
+            <br />
+            2. Configurar horarios y tarifas
+            <br />
+            3. Vincular tu cuenta de Mercado Pago
+          </Typography>
+        </Paper>
+      ) : (
+        /* Gráficos y Reseñas para usuarios con estacionamientos */
+        <Grid container spacing={3}>
+          {/* Gráfico de Ingresos */}
+          <Grid item xs={12} lg={8}>
+            <Paper sx={{ p: 3 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  Ingresos Diarios
+                </Typography>
+                <ToggleButtonGroup
+                  value={periodo}
+                  exclusive
+                  onChange={(e, newPeriodo) => {
+                    if (newPeriodo !== null) {
+                      setPeriodo(newPeriodo);
+                    }
+                  }}
+                  size="small"
+                  sx={{
+                    '& .MuiToggleButton-root': {
+                      color: '#718096',
+                      borderColor: '#E2E8F0',
+                      '&:hover': {
+                        backgroundColor: '#E8F7FA',
+                      },
+                      '&.Mui-selected': {
+                        backgroundColor: '#00B4D8',
+                        color: 'white',
+                        fontWeight: 600,
+                        '&:hover': {
+                          backgroundColor: '#0096C7',
+                        },
+                      },
+                    },
+                  }}
+                >
+                  <ToggleButton value="7">7 días</ToggleButton>
+                  <ToggleButton value="15">15 días</ToggleButton>
+                  <ToggleButton value="30">1 mes</ToggleButton>
+                  <ToggleButton value="90">3 meses</ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={ingresosDiarios}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="fecha" 
+                    style={{ fontSize: '12px' }}
+                  />
+                  <YAxis 
+                    style={{ fontSize: '12px' }}
+                    tickFormatter={(value) => `$${value}`}
+                  />
+                  <Tooltip 
+                    formatter={(value: number) => [`$${value}`, 'Ingresos']}
+                    contentStyle={{ 
+                      backgroundColor: 'white', 
+                      border: '1px solid #ccc',
+                      borderRadius: '8px',
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="ingresos" 
+                    stroke="#00B4D8" 
+                    strokeWidth={3}
+                    dot={{ fill: '#00B4D8', r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </Paper>
+          </Grid>
+
+          {/* Últimas Reseñas */}
+          <Grid item xs={12} lg={4}>
+            <Paper sx={{ p: 3, height: '100%' }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
+                Últimas Reseñas
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {resenas.length === 0 ? (
+                  <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
+                    Aún no tienes reseñas
+                  </Typography>
+                ) : (
+                  resenas.map((resena) => (
+                    <Card key={resena.id} variant="outlined" sx={{ p: 2 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 1 }}>
+                        <Avatar sx={{ bgcolor: '#00B4D8', width: 32, height: 32, fontSize: '0.875rem' }}>
+                          {resena.usuario_nombre.charAt(0).toUpperCase()}
+                        </Avatar>
+                        <Box sx={{ flex: 1 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                              {resena.usuario_nombre}
+                            </Typography>
+                            {!resena.respondida && (
+                              <Chip label="Sin responder" size="small" color="warning" sx={{ height: 20 }} />
+                            )}
+                          </Box>
+                          <Rating value={resena.calificacion} size="small" readOnly sx={{ mb: 0.5 }} />
+                          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                            {resena.estacionamiento_nombre}
+                          </Typography>
+                          <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                            {resena.comentario}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {format(new Date(resena.created_at), 'dd MMM yyyy', { locale: es })}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Card>
+                  ))
+                )}
+              </Box>
+            </Paper>
+          </Grid>
+        </Grid>
+      )}
     </Container>
   );
 }

@@ -108,8 +108,20 @@ export const authService = {
 
     if (error) throw error;
 
-    // Asignar rol de propietario por defecto
+    // Crear registro en tabla users y asignar rol de propietario
     if (data.user) {
+      // Insertar en tabla users con nombre
+      const { error: userError } = await supabase.from('users').insert({
+        id: data.user.id,
+        email: data.user.email,
+        nombre: metadata.nombre || null,
+      });
+
+      if (userError) {
+        console.error('Error creating user profile:', userError);
+      }
+
+      // Asignar rol de propietario por defecto
       const { error: roleError } = await supabase.from('user_roles').insert({
         user_id: data.user.id,
         role: 'propietario',

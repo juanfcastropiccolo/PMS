@@ -72,13 +72,30 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const drawer = (
     <Box>
       {/* Logo */}
-      <Box sx={{ p: 3, textAlign: 'center' }}>
-        <Typography variant="h5" sx={{ color: '#00B4D8', fontWeight: 700 }}>
-          Parkit
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          PMS
-        </Typography>
+      <Box sx={{ 
+        p: 0,
+        py: 1.5,
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        height: 120,
+        width: '100%',
+      }}>
+        <Box
+          component="img"
+          src="/PMS_logo.png"
+          alt="Parkit PMS"
+          sx={{
+            width: '100%',
+            maxWidth: 240,
+            height: 'auto',
+            minHeight: 160,
+            objectFit: 'cover',
+            objectPosition: 'center 42%',
+          }}
+        />
       </Box>
 
       <Divider />
