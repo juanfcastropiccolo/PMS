@@ -30,6 +30,8 @@ import {
   PersonOutlined,
   LogoutOutlined,
   AdminPanelSettingsOutlined,
+  AttachMoneyOutlined,
+  AccountBalanceOutlined,
 } from '@mui/icons-material';
 
 const drawerWidth = 260;
@@ -65,8 +67,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { text: 'Dashboard', icon: <DashboardOutlined />, path: '/dashboard' },
     { text: 'Estacionamientos', icon: <LocalParkingOutlined />, path: '/dashboard/estacionamientos' },
     { text: 'Reservas', icon: <CalendarMonthOutlined />, path: '/dashboard/reservas' },
+    { text: 'Ingresos', icon: <AttachMoneyOutlined />, path: '/dashboard/ingresos' },
     { text: 'Reseñas', icon: <StarOutlined />, path: '/dashboard/resenas' },
-    { text: 'Mercado Pago', icon: <PaymentOutlined />, path: '/dashboard/mercadopago' },
+    { text: 'Configurá tus cobros', icon: <AccountBalanceOutlined />, path: '/dashboard/cobros' },
   ];
 
   const drawer = (
