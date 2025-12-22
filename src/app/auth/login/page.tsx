@@ -67,12 +67,35 @@ export default function LoginPage() {
         <CardContent sx={{ p: 4 }}>
           {/* Logo */}
           <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Typography variant="h4" sx={{ color: '#00B4D8', fontWeight: 700, mb: 1 }}>
-              Parkit
-            </Typography>
-            <Typography variant="subtitle1" color="text.secondary">
-              Parking Management System
-            </Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                mb: 3,
+                height: { xs: 128, sm: 165 },
+                overflow: 'hidden',
+                px: { xs: 1, sm: 2 },
+                py: { xs: 1, sm: 1 },
+              }}
+            >
+              <Box
+                component="img"
+                src="/PMS_logo.png?v=2"
+                alt="PMS Logo"
+                sx={{
+                  height: '100%',
+                  width: '100%',
+                  objectFit: 'contain',
+                  // El PNG tiene bastante padding interno; este "zoom" mejora la proporción visual sin cambiar el asset.
+                  transform: {
+                    xs: 'translateY(6px) scale(1.35)',
+                    sm: 'translateY(8px) scale(1.45)',
+                  },
+                  transformOrigin: 'center',
+                }}
+              />
+            </Box>
           </Box>
 
           {/* Error */}

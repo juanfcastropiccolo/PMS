@@ -86,7 +86,28 @@ export default function RegisterPage() {
         <CardContent sx={{ p: 4 }}>
           {/* Logo */}
           <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Typography variant="h4" sx={{ color: '#00B4D8', fontWeight: 700, mb: 1 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                mb: 2,
+                height: { xs: 96, sm: 130 },
+              }}
+            >
+              <Box
+                component="img"
+                src="/PMS_logo.png?v=2"
+                alt="PMS Logo"
+                sx={{
+                  height: { xs: 96, sm: 130 },
+                  width: 'auto',
+                  maxWidth: '100%',
+                  objectFit: 'contain',
+                }}
+              />
+            </Box>
+            <Typography variant="h5" sx={{ color: '#00B4D8', fontWeight: 600, mb: 1 }}>
               Crear Cuenta
             </Typography>
             <Typography variant="subtitle1" color="text.secondary">

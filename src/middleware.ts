@@ -78,7 +78,10 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  // Importante: excluir /api para que funcionen las API routes (ej: /api/auth/check-role)
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|public).*)'],
+  // Importante: excluir /api y assets estáticos (los archivos de /public se sirven desde la raíz, ej: /PMS_logo.png)
+  // Si el middleware intercepta imágenes/css/js, puede redirigir a /auth/login y "romper" los assets en el navegador.
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico|css|js|map|txt)$).*)',
+  ],
 };
 
