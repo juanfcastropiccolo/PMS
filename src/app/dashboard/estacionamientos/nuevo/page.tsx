@@ -60,6 +60,36 @@ const caracteristicasDisponibles = [
 
 const steps = ['Información Básica', 'Ubicación', 'Precios y Horarios', 'Características'];
 
+type NumberInput = number | '';
+
+type FormData = {
+  nombre: string;
+  tipo: string;
+  detalles: string;
+  capacidad_total: NumberInput;
+  cantidad_pisos: NumberInput;
+  direccion: string;
+  lat: NumberInput;
+  lng: NumberInput;
+  precio_hora: NumberInput;
+  precio_por_dia: NumberInput;
+  precio_por_mes: NumberInput;
+  moneda: string;
+  abierto_24h: boolean;
+  horario: {
+    lunes: { abre: string; cierra: string; cerrado: boolean };
+    martes: { abre: string; cierra: string; cerrado: boolean };
+    miercoles: { abre: string; cierra: string; cerrado: boolean };
+    jueves: { abre: string; cierra: string; cerrado: boolean };
+    viernes: { abre: string; cierra: string; cerrado: boolean };
+    sabado: { abre: string; cierra: string; cerrado: boolean };
+    domingo: { abre: string; cierra: string; cerrado: boolean };
+  };
+  caracteristicas: string[];
+  altura_maxima: NumberInput;
+  capacidad: NumberInput;
+};
+
 export default function NuevoEstacionamientoPage() {
   const router = useRouter();
   const { user } = useAuth();
@@ -69,7 +99,7 @@ export default function NuevoEstacionamientoPage() {
   const [success, setSuccess] = useState(false);
 
   // Form data
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     // Información básica
     nombre: '',
     tipo: 'cochera_particular',
@@ -105,6 +135,8 @@ export default function NuevoEstacionamientoPage() {
     altura_maxima: 2.5,
     capacidad: 1,
   });
+
+  const getNumberValue = (value: NumberInput) => (value === '' ? 0 : value);
 
   const handleChange = (field: string, value: any) => {
     setFormData((prev) => ({
@@ -149,6 +181,16 @@ export default function NuevoEstacionamientoPage() {
       return;
     }
 
+    if (
+      formData.capacidad === '' ||
+      formData.cantidad_pisos === '' ||
+      formData.lat === '' ||
+      formData.lng === ''
+    ) {
+      setError('Completa los campos numéricos requeridos');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -156,12 +198,16 @@ export default function NuevoEstacionamientoPage() {
       // Validar precios según constraint: 
       // precio_por_dia >= precio_hora * 8
       // precio_por_mes >= precio_por_dia * 20
-      const precioPorDia = formData.precio_por_dia > 0 
-        ? Math.max(formData.precio_por_dia, formData.precio_hora * 8)
+      const precioHora = getNumberValue(formData.precio_hora);
+      const precioDiaInput = getNumberValue(formData.precio_por_dia);
+      const precioMesInput = getNumberValue(formData.precio_por_mes);
+
+      const precioPorDia = precioDiaInput > 0 
+        ? Math.max(precioDiaInput, precioHora * 8)
         : null;
       
-      const precioPorMes = formData.precio_por_mes > 0
-        ? Math.max(formData.precio_por_mes, (precioPorDia || 0) * 20)
+      const precioPorMes = precioMesInput > 0
+        ? Math.max(precioMesInput, (precioPorDia || 0) * 20)
         : null;
 
       // Usar función RPC que bypasea RLS con SECURITY DEFINER
@@ -175,14 +221,14 @@ export default function NuevoEstacionamientoPage() {
           p_lng: formData.lng,
           p_capacidad: formData.capacidad,
           p_cantidad_pisos: formData.cantidad_pisos,
-          p_precio_hora: formData.precio_hora,
+          p_precio_hora: precioHora,
           p_precio_por_dia: precioPorDia,
           p_precio_por_mes: precioPorMes,
           p_moneda: formData.moneda,
           p_horario: formData.horario,
           p_abierto_24h: formData.abierto_24h,
           p_caracteristicas: formData.caracteristicas,
-          p_altura_maxima: formData.altura_maxima,
+          p_altura_maxima: formData.altura_maxima === '' ? null : formData.altura_maxima,
           p_detalles: formData.detalles || null,
         });
 
@@ -239,7 +285,12 @@ export default function NuevoEstacionamientoPage() {
                 type="number"
                 label="Capacidad Total"
                 value={formData.capacidad}
-                onChange={(e) => handleChange('capacidad', parseInt(e.target.value))}
+                onChange={(e) =>
+                  handleChange(
+                    'capacidad',
+                    e.target.value === '' ? '' : parseInt(e.target.value, 10)
+                  )
+                }
                 required
                 inputProps={{ min: 1 }}
               />
@@ -251,7 +302,12 @@ export default function NuevoEstacionamientoPage() {
                 type="number"
                 label="Cantidad de Pisos"
                 value={formData.cantidad_pisos}
-                onChange={(e) => handleChange('cantidad_pisos', parseInt(e.target.value))}
+                onChange={(e) =>
+                  handleChange(
+                    'cantidad_pisos',
+                    e.target.value === '' ? '' : parseInt(e.target.value, 10)
+                  )
+                }
                 inputProps={{ min: 1 }}
               />
             </Grid>
@@ -291,7 +347,9 @@ export default function NuevoEstacionamientoPage() {
                 type="number"
                 label="Latitud"
                 value={formData.lat}
-                onChange={(e) => handleChange('lat', parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleChange('lat', e.target.value === '' ? '' : parseFloat(e.target.value))
+                }
                 inputProps={{ step: 0.0001 }}
                 required
               />
@@ -303,7 +361,9 @@ export default function NuevoEstacionamientoPage() {
                 type="number"
                 label="Longitud"
                 value={formData.lng}
-                onChange={(e) => handleChange('lng', parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleChange('lng', e.target.value === '' ? '' : parseFloat(e.target.value))
+                }
                 inputProps={{ step: 0.0001 }}
                 required
               />
@@ -332,7 +392,12 @@ export default function NuevoEstacionamientoPage() {
                 type="number"
                 label="Precio por Hora (ARS)"
                 value={formData.precio_hora}
-                onChange={(e) => handleChange('precio_hora', parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleChange(
+                    'precio_hora',
+                    e.target.value === '' ? '' : parseFloat(e.target.value)
+                  )
+                }
                 required
                 inputProps={{ min: 0, step: 0.01 }}
               />
@@ -344,11 +409,18 @@ export default function NuevoEstacionamientoPage() {
                 type="number"
                 label="Precio por Día (ARS)"
                 value={formData.precio_por_dia}
-                onChange={(e) => handleChange('precio_por_dia', parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleChange(
+                    'precio_por_dia',
+                    e.target.value === '' ? '' : parseFloat(e.target.value)
+                  )
+                }
                 inputProps={{ min: 0, step: 0.01 }}
                 helperText={
-                  formData.precio_hora > 0
-                    ? `Mínimo recomendado: $${(formData.precio_hora * 8).toFixed(2)} (8 horas)`
+                  getNumberValue(formData.precio_hora) > 0
+                    ? `Mínimo recomendado: $${(getNumberValue(formData.precio_hora) * 8).toFixed(
+                        2
+                      )} (8 horas)`
                     : 'Opcional - déjalo en 0 si no aplica'
                 }
               />
@@ -360,11 +432,18 @@ export default function NuevoEstacionamientoPage() {
                 type="number"
                 label="Precio por Mes (ARS)"
                 value={formData.precio_por_mes}
-                onChange={(e) => handleChange('precio_por_mes', parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleChange(
+                    'precio_por_mes',
+                    e.target.value === '' ? '' : parseFloat(e.target.value)
+                  )
+                }
                 inputProps={{ min: 0, step: 0.01 }}
                 helperText={
-                  formData.precio_por_dia > 0
-                    ? `Mínimo recomendado: $${(formData.precio_por_dia * 20).toFixed(2)} (20 días)`
+                  getNumberValue(formData.precio_por_dia) > 0
+                    ? `Mínimo recomendado: $${(getNumberValue(formData.precio_por_dia) * 20).toFixed(
+                        2
+                      )} (20 días)`
                     : 'Opcional - déjalo en 0 si no aplica'
                 }
               />
@@ -467,7 +546,12 @@ export default function NuevoEstacionamientoPage() {
                 type="number"
                 label="Altura Máxima (metros)"
                 value={formData.altura_maxima}
-                onChange={(e) => handleChange('altura_maxima', parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleChange(
+                    'altura_maxima',
+                    e.target.value === '' ? '' : parseFloat(e.target.value)
+                  )
+                }
                 inputProps={{ min: 1.8, max: 5, step: 0.1 }}
                 helperText="Altura libre para vehículos"
               />
