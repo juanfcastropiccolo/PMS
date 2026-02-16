@@ -78,7 +78,8 @@ export default function ImageUpload({
 
       // Actualizar la tabla estacionamientos con la nueva URL
       const columnName = tipo === 'perfil' ? 'foto_perfil_url' : 'foto_portada_url';
-      const { error: updateError } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: updateError } = await (supabase as any)
         .from('estacionamientos')
         .update({ [columnName]: finalUrl })
         .eq('id', estacionamientoId)

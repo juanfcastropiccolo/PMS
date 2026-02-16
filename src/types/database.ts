@@ -17,52 +17,9 @@ export interface Database {
       reservas: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> };
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       resenas: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> };
-      estacionamientos: {
-        Row: {
-          id: string;
-          propietario_id: string;
-          nombre: string;
-          tipo: 'cochera_privada' | 'playa_comercial' | 'garage_edificio';
-          descripcion: string | null;
-          direccion_completa: string;
-          calle: string | null;
-          numero: string | null;
-          barrio: string | null;
-          ciudad: string;
-          provincia: string;
-          codigo_postal: string | null;
-          latitud: number;
-          longitud: number;
-          capacidad_total: number;
-          cantidad_pisos: number;
-          distribucion_pisos: Json | null;
-          horarios: Json;
-          abierto_24h: boolean;
-          precio_por_hora: number;
-          precio_por_dia: number | null;
-          precio_por_mes: number | null;
-          moneda: string;
-          caracteristicas: Json;
-          altura_maxima: number | null;
-          activo: boolean;
-          verificado: boolean;
-          estado_verificacion: 'pendiente' | 'aprobado' | 'rechazado' | 'suspendido';
-          motivo_rechazo: string | null;
-          verificado_por: string | null;
-          verificado_at: string | null;
-          mp_account_vinculada: boolean;
-          total_reservas: number;
-          calificacion_promedio: number | null;
-          total_resenas: number;
-          espacios_disponibles: number;
-          ultima_actualizacion_disponibilidad: string | null;
-          metadata: Json;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Omit<Database['public']['Tables']['estacionamientos']['Row'], 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Database['public']['Tables']['estacionamientos']['Insert']>;
-      };
+      // estacionamientos: schema real puede diferir (direccion/lat/lng vs direccion_completa/latitud/longitud, etc.)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      estacionamientos: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> };
       fotos_estacionamiento: {
         Row: {
           id: string;

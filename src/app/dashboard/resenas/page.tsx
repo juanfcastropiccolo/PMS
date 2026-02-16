@@ -78,17 +78,18 @@ export default function ResenasPage() {
     if (!user) return;
 
     try {
-      // Cargar estacionamientos del propietario
-      const { data: estacionamientosData } = await supabase
+      // Cargar estacionamientos del propietario (cast por inferencia de tipos)
+      const { data: rawEst } = await supabase
         .from('estacionamientos')
         .select('id, nombre')
         .eq('propietario_id', user.id)
         .eq('es_marketplace', true);
+      const estacionamientosData = rawEst as { id: string; nombre: string }[] | null;
 
       setEstacionamientos(estacionamientosData || []);
 
       // Cargar reseñas de todos los estacionamientos del propietario
-      const estacionamientoIds = estacionamientosData?.map(e => e.id) || [];
+      const estacionamientoIds = estacionamientosData?.map((e) => e.id) || [];
       
       if (estacionamientoIds.length > 0) {
         const { data: resenasData, error } = await supabase
@@ -123,7 +124,8 @@ export default function ResenasPage() {
     setEnviandoRespuesta(true);
 
     try {
-      const { error } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase as any)
         .from('resenas')
         .update({
           respuesta_propietario: respuesta.trim(),

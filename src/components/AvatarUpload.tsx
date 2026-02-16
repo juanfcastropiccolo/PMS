@@ -67,7 +67,8 @@ export default function AvatarUpload({
       const finalUrl = `${publicUrl}?t=${Date.now()}`;
 
       // Actualizar la tabla users con la nueva URL
-      const { error: updateError } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: updateError } = await (supabase as any)
         .from('users')
         .update({ foto_perfil_url: finalUrl })
         .eq('id', userId);

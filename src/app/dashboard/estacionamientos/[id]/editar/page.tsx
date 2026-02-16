@@ -113,7 +113,7 @@ export default function EditarEstacionamientoPage() {
 
   const loadEstacionamiento = async () => {
     try {
-      const { data, error: fetchError } = await supabase
+      const { data: rawData, error: fetchError } = await supabase
         .from('estacionamientos')
         .select('*')
         .eq('id', id)
@@ -122,33 +122,37 @@ export default function EditarEstacionamientoPage() {
 
       if (fetchError) throw fetchError;
 
+      const data = rawData as Record<string, unknown> | null;
       if (data) {
+        const horarioDefault = {
+          lunes: { abre: '08:00', cierra: '20:00', cerrado: false },
+          martes: { abre: '08:00', cierra: '20:00', cerrado: false },
+          miercoles: { abre: '08:00', cierra: '20:00', cerrado: false },
+          jueves: { abre: '08:00', cierra: '20:00', cerrado: false },
+          viernes: { abre: '08:00', cierra: '20:00', cerrado: false },
+          sabado: { abre: '09:00', cierra: '18:00', cerrado: false },
+          domingo: { abre: '00:00', cierra: '00:00', cerrado: true },
+        };
+        const horarioFromDb = data.horario as Record<string, { abre: string; cierra: string; cerrado: boolean }> | null | undefined;
+        const horario = horarioFromDb ? { ...horarioDefault, ...horarioFromDb } : horarioDefault;
         setFormData({
-          nombre: data.nombre || '',
-          tipo: data.tipo || 'cochera_particular',
-          detalles: data.detalles || '',
-          capacidad_total: data.capacidad || 1,
-          cantidad_pisos: data.cantidad_pisos || 1,
-          direccion: data.direccion || '',
-          lat: data.lat || -34.6037,
-          lng: data.lng || -58.3816,
-          precio_hora: parseFloat(data.precio_hora?.toString() || '0'),
-          precio_por_dia: parseFloat(data.precio_por_dia?.toString() || '0'),
-          precio_por_mes: parseFloat(data.precio_por_mes?.toString() || '0'),
-          moneda: data.moneda || 'ARS',
-          abierto_24h: data.abierto_24h || false,
-          horario: data.horario || {
-            lunes: { abre: '08:00', cierra: '20:00', cerrado: false },
-            martes: { abre: '08:00', cierra: '20:00', cerrado: false },
-            miercoles: { abre: '08:00', cierra: '20:00', cerrado: false },
-            jueves: { abre: '08:00', cierra: '20:00', cerrado: false },
-            viernes: { abre: '08:00', cierra: '20:00', cerrado: false },
-            sabado: { abre: '09:00', cierra: '18:00', cerrado: false },
-            domingo: { abre: '00:00', cierra: '00:00', cerrado: true },
-          },
+          nombre: (data.nombre as string) || '',
+          tipo: (data.tipo as string) || 'cochera_particular',
+          detalles: (data.detalles as string) || '',
+          capacidad_total: (data.capacidad as number) || 1,
+          cantidad_pisos: (data.cantidad_pisos as number) || 1,
+          direccion: (data.direccion as string) || '',
+          lat: (data.lat as number) ?? -34.6037,
+          lng: (data.lng as number) ?? -58.3816,
+          precio_hora: parseFloat((data.precio_hora as number)?.toString() || '0'),
+          precio_por_dia: parseFloat((data.precio_por_dia as number)?.toString() || '0'),
+          precio_por_mes: parseFloat((data.precio_por_mes as number)?.toString() || '0'),
+          moneda: (data.moneda as string) || 'ARS',
+          abierto_24h: (data.abierto_24h as boolean) || false,
+          horario,
           caracteristicas: (data.caracteristicas as string[]) || [],
-          altura_maxima: parseFloat(data.altura_maxima?.toString() || '2.5'),
-          capacidad: data.capacidad || 1,
+          altura_maxima: parseFloat((data.altura_maxima as number)?.toString() || '2.5'),
+          capacidad: (data.capacidad as number) || 1,
         });
       }
     } catch (err: unknown) {
@@ -215,27 +219,29 @@ export default function EditarEstacionamientoPage() {
         ? Math.max(formData.precio_por_mes, (precioPorDia || 0) * 20)
         : null;
 
-      // Update estacionamiento
-      const { error: updateError } = await supabase
+      // Update estacionamiento (cast por desajuste entre tipos Database y schema real)
+      const updatePayload = {
+        nombre: formData.nombre,
+        tipo: formData.tipo,
+        detalles: formData.detalles,
+        direccion: formData.direccion,
+        lat: formData.lat,
+        lng: formData.lng,
+        capacidad: formData.capacidad,
+        cantidad_pisos: formData.cantidad_pisos,
+        precio_hora: formData.precio_hora,
+        precio_por_dia: precioPorDia,
+        precio_por_mes: precioPorMes,
+        moneda: formData.moneda,
+        horario: formData.horario,
+        abierto_24h: formData.abierto_24h,
+        caracteristicas: formData.caracteristicas,
+        altura_maxima: formData.altura_maxima,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: updateError } = await (supabase as any)
         .from('estacionamientos')
-        .update({
-          nombre: formData.nombre,
-          tipo: formData.tipo,
-          detalles: formData.detalles,
-          direccion: formData.direccion,
-          lat: formData.lat,
-          lng: formData.lng,
-          capacidad: formData.capacidad,
-          cantidad_pisos: formData.cantidad_pisos,
-          precio_hora: formData.precio_hora,
-          precio_por_dia: precioPorDia,
-          precio_por_mes: precioPorMes,
-          moneda: formData.moneda,
-          horario: formData.horario,
-          abierto_24h: formData.abierto_24h,
-          caracteristicas: formData.caracteristicas,
-          altura_maxima: formData.altura_maxima,
-        })
+        .update(updatePayload)
         .eq('id', id)
         .eq('propietario_id', user.id);
 

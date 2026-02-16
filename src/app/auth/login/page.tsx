@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   Box,
@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 
-export default function LoginPage() {
+function LoginContent() {
   const { signIn, signInWithGoogle } = useAuth();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
@@ -202,6 +202,20 @@ export default function LoginPage() {
         </CardContent>
       </Card>
     </Box>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #00B4D8 0%, #0077B6 100%)' }}>
+          <CircularProgress sx={{ color: 'white' }} />
+        </Box>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 }
 

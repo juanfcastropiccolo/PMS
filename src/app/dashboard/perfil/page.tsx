@@ -80,19 +80,20 @@ export default function PerfilPage() {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
+      const { data: rawData, error } = await supabase
         .from('users')
         .select('nombre, foto_perfil_url, telefono')
         .eq('id', user.id)
         .single();
+      const data = rawData as { nombre?: string; telefono?: string; foto_perfil_url?: string | null } | null;
 
       if (error) throw error;
 
       setProfileData({
-        nombre: data?.nombre || user.metadata?.nombre || '',
-        telefono: data?.telefono || user.metadata?.telefono || '',
+        nombre: data?.nombre || (user.metadata?.nombre as string) || '',
+        telefono: data?.telefono || (user.metadata?.telefono as string) || '',
         email: user.email || '',
-        foto_perfil_url: data?.foto_perfil_url || null,
+        foto_perfil_url: data?.foto_perfil_url ?? null,
       });
     } catch (error) {
       console.error('Error loading profile:', error);
@@ -144,13 +145,11 @@ export default function PerfilPage() {
 
       if (authError) throw authError;
 
-      // Actualizar tabla public.users
-      const { error: dbError } = await supabase
+      // Actualizar tabla public.users (cast por inferencia de tipos)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: dbError } = await (supabase as any)
         .from('users')
-        .update({
-          nombre: profileData.nombre,
-          telefono: profileData.telefono,
-        })
+        .update({ nombre: profileData.nombre, telefono: profileData.telefono })
         .eq('id', user.id);
 
       if (dbError) throw dbError;

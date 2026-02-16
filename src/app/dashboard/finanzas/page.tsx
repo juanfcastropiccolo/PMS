@@ -50,20 +50,21 @@ export default function FinanzasPage() {
         .eq('is_active', true)
         .single();
 
-      // Obtener estacionamientos
-      const { data: estacionamientos } = await supabase
+      // Obtener estacionamientos (cast por desajuste tipos Database/schema real)
+      const { data: rawEst } = await supabase
         .from('estacionamientos')
         .select('id')
         .eq('propietario_id', user.id);
+      const estacionamientos = rawEst as { id: string }[] | null;
+      const estacionamientoIds = estacionamientos?.map((e) => e.id) || [];
 
-      const estacionamientoIds = estacionamientos?.map(e => e.id) || [];
-
-      // Calcular ingresos
-      const { data: reservas } = await supabase
+      // Calcular ingresos (cast por inferencia de tipos en query)
+      const { data: rawReservas } = await supabase
         .from('reservas_estacionamiento')
         .select('monto_propietario, created_at')
         .in('estacionamiento_id', estacionamientoIds)
         .eq('estado', 'completada');
+      const reservas = rawReservas as { monto_propietario: number; created_at: string }[] | null;
 
       const now = new Date();
       const mesActual = now.getMonth();
@@ -72,12 +73,12 @@ export default function FinanzasPage() {
       const añoMesAnterior = mesActual === 0 ? añoActual - 1 : añoActual;
 
       const ingresosTotales = reservas?.reduce((sum, r) => sum + r.monto_propietario, 0) || 0;
-      const ingresosMesActual = reservas?.filter(r => {
+      const ingresosMesActual = reservas?.filter((r) => {
         const fecha = new Date(r.created_at);
         return fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual;
       }).reduce((sum, r) => sum + r.monto_propietario, 0) || 0;
 
-      const ingresosMesAnterior = reservas?.filter(r => {
+      const ingresosMesAnterior = reservas?.filter((r) => {
         const fecha = new Date(r.created_at);
         return fecha.getMonth() === mesAnterior && fecha.getFullYear() === añoMesAnterior;
       }).reduce((sum, r) => sum + r.monto_propietario, 0) || 0;

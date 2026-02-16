@@ -50,15 +50,16 @@ export default function ReservasPage() {
     if (!user) return;
 
     try {
-      // Obtener estacionamientos del propietario
-      const { data: estacionamientos, error: estError } = await supabase
+      // Obtener estacionamientos del propietario (cast por inferencia de tipos)
+      const { data: rawEst, error: estError } = await supabase
         .from('estacionamientos')
         .select('id')
         .eq('propietario_id', user.id);
+      const estacionamientos = rawEst as { id: string }[] | null;
 
       if (estError) throw estError;
 
-      const estacionamientoIds = estacionamientos?.map(e => e.id) || [];
+      const estacionamientoIds = estacionamientos?.map((e) => e.id) || [];
 
       if (estacionamientoIds.length === 0) {
         setReservas([]);

@@ -232,10 +232,11 @@ export default function IngresosPage() {
     if (!user) return;
 
     try {
-      const { data: estacionamientos } = await supabase
+      const { data: rawEst } = await supabase
         .from('estacionamientos')
         .select('id, nombre')
         .eq('propietario_id', user.id);
+      const estacionamientos = rawEst as { id: string; nombre: string }[] | null;
 
       if (!estacionamientos) return;
 
