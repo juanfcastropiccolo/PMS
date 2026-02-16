@@ -40,11 +40,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Deactivate MP account
+    // Deactivate MP account (DB column is user_id)
     const { error: mpError } = await admin
       .from('mp_accounts_propietarios')
       .update({ is_active: false })
-      .eq('propietario_id', userId);
+      .eq('user_id', userId);
 
     if (mpError) {
       console.error('Error deactivating MP account:', mpError);

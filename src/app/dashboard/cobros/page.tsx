@@ -247,15 +247,10 @@ export default function CobrosPage() {
   const loadMPAccount = async () => {
     if (!user) return;
     try {
-      const { data, error } = await supabase
-        .from('mp_accounts_propietarios')
-        .select('*')
-        .eq('propietario_id', user.id)
-        .eq('is_active', true)
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      setMpAccount(data || null);
+      const response = await fetch('/api/mercadopago/account');
+      if (!response.ok) throw new Error('Failed to fetch MP account');
+      const { account } = await response.json();
+      setMpAccount(account || null);
     } catch (error) {
       console.error('Error loading MP account:', error);
     }
