@@ -453,7 +453,7 @@ export default function CobrosPage() {
               {mpAccount && (
                 <Box sx={{ position: 'absolute', top: 12, right: 12 }}>
                   <Image
-                    src="/mercadopago-logo.svg"
+                    src="/mercadopago-logo.png"
                     alt="Mercado Pago"
                     width={32}
                     height={32}
@@ -561,7 +561,7 @@ export default function CobrosPage() {
                     >
                       <Box sx={{ display: 'flex', alignItems: 'start' }}>
                         <Image
-                          src="/mercadopago-logo.svg"
+                          src="/mercadopago-logo.png"
                           alt="Mercado Pago"
                           width={40}
                           height={40}
@@ -627,7 +627,7 @@ export default function CobrosPage() {
                 >
                   <CardContent>
                     <Image
-                      src="/mercadopago-logo.svg"
+                      src="/mercadopago-logo.png"
                       alt="Mercado Pago"
                       width={48}
                       height={48}
@@ -884,7 +884,7 @@ export default function CobrosPage() {
         <DialogContent>
           <Box sx={{ textAlign: 'center', py: 2 }}>
             <Image
-              src="/mercadopago-logo.svg"
+              src="/mercadopago-logo.png"
               alt="Mercado Pago"
               width={64}
               height={64}
@@ -933,7 +933,7 @@ export default function CobrosPage() {
             <Box sx={{ py: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                 <Image
-                  src="/mercadopago-logo.svg"
+                  src="/mercadopago-logo.png"
                   alt="Mercado Pago"
                   width={40}
                   height={40}
