@@ -43,6 +43,7 @@ export default function ReservasPage() {
 
   useEffect(() => {
     loadReservas();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, tabValue]);
 
   const loadReservas = async () => {

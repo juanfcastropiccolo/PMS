@@ -62,8 +62,8 @@ export default function RegisterPage() {
 
       toast.success('¡Cuenta creada exitosamente! Por favor verifica tu email.');
       router.push('/auth/login');
-    } catch (err: any) {
-      const errorMessage = err.message || 'Error al crear la cuenta';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Error al crear la cuenta';
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {

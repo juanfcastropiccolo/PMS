@@ -31,7 +31,6 @@ import {
   TableHead,
   TableRow,
   IconButton,
-  Tooltip,
   Tab,
   Tabs,
   Radio,
@@ -44,7 +43,6 @@ import {
   AccountBalanceOutlined,
   PaymentOutlined,
   AddOutlined,
-  EditOutlined,
   DeleteOutlined,
   CheckCircleOutlined,
   InfoOutlined,
@@ -138,6 +136,7 @@ export default function CobrosPage() {
     if (user) {
       loadData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const loadData = async () => {
@@ -236,6 +235,7 @@ export default function CobrosPage() {
     if (!user) return;
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const dataToInsert: any = {
         propietario_id: user.id,
         tipo: tipoCuenta,
@@ -271,7 +271,7 @@ export default function CobrosPage() {
       setOpenCuentaDialog(false);
       loadCuentas();
       resetForm();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error guardando cuenta:', error);
       toast.error('Error al guardar la cuenta');
     }
@@ -303,7 +303,8 @@ export default function CobrosPage() {
     }
 
     try {
-      const { error } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase as any)
         .from('withdrawals')
         .insert({
           propietario_id: user.id,
@@ -326,7 +327,7 @@ export default function CobrosPage() {
       setEsRetiroAdelantado(false);
       loadWithdrawals();
       loadBilletera();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error solicitando retiro:', error);
       toast.error('Error al solicitar el retiro');
     }
@@ -362,7 +363,7 @@ export default function CobrosPage() {
   };
 
   const getEstadoChip = (estado: string) => {
-    const config: any = {
+    const config: Record<string, { label: string; color: 'warning' | 'info' | 'success' | 'error' | 'default' }> = {
       pendiente: { label: 'Pendiente', color: 'warning' },
       procesando: { label: 'Procesando', color: 'info' },
       completado: { label: 'Completado', color: 'success' },
@@ -701,7 +702,7 @@ export default function CobrosPage() {
             <Select
               value={tipoCuenta}
               label="Tipo de Cuenta"
-              onChange={(e) => setTipoCuenta(e.target.value as any)}
+              onChange={(e) => setTipoCuenta(e.target.value as 'mercado_pago' | 'cuenta_bancaria')}
             >
               <MenuItem value="mercado_pago">Mercado Pago</MenuItem>
               <MenuItem value="cuenta_bancaria">Cuenta Bancaria</MenuItem>

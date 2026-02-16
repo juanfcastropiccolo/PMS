@@ -26,7 +26,6 @@ import {
   LocalParkingOutlined,
   CalendarMonthOutlined,
   StarOutlined,
-  PaymentOutlined,
   PersonOutlined,
   LogoutOutlined,
   AdminPanelSettingsOutlined,

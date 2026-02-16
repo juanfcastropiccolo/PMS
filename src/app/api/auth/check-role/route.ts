@@ -20,7 +20,8 @@ export async function POST(request: NextRequest) {
     const { data: roles, error } = await admin
       .from('user_roles')
       .select('role')
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .returns<{ role: string }[]>();
 
     if (error) {
       console.error('❌ [API] Error fetching roles:', error);

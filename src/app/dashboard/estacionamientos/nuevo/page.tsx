@@ -23,12 +23,9 @@ import {
   Step,
   StepLabel,
   Chip,
-  IconButton,
 } from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
-  Add as AddIcon,
-  Delete as DeleteIcon,
 } from '@mui/icons-material';
 import { createClient } from '@supabase/supabase-js';
 
@@ -138,14 +135,14 @@ export default function NuevoEstacionamientoPage() {
 
   const getNumberValue = (value: NumberInput) => (value === '' ? 0 : value);
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string | number | boolean | string[] | '') => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handleHorarioChange = (dia: string, field: string, value: any) => {
+  const handleHorarioChange = (dia: string, field: string, value: string | boolean) => {
     setFormData((prev) => ({
       ...prev,
       horario: {
@@ -211,7 +208,7 @@ export default function NuevoEstacionamientoPage() {
         : null;
 
       // Usar función RPC que bypasea RLS con SECURITY DEFINER
-      const { data, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .rpc('insert_estacionamiento_pms', {
           p_propietario_id: user.id,
           p_nombre: formData.nombre,
@@ -238,9 +235,9 @@ export default function NuevoEstacionamientoPage() {
       setTimeout(() => {
         router.push('/dashboard/estacionamientos');
       }, 2000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error creating estacionamiento:', err);
-      setError(err.message || 'Error al crear el estacionamiento');
+      setError(err instanceof Error ? err.message : 'Error al crear el estacionamiento');
     } finally {
       setLoading(false);
     }

@@ -21,7 +21,6 @@ import {
   ToggleButton,
   CircularProgress,
   Button,
-  Divider,
 } from '@mui/material';
 import {
   AttachMoneyOutlined,
@@ -32,7 +31,7 @@ import {
   LocalParkingOutlined,
 } from '@mui/icons-material';
 import { supabase } from '@/lib/supabaseClient';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { format, subDays, startOfDay, startOfMonth, endOfMonth } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -73,7 +72,6 @@ interface Transaccion {
 }
 
 const COLORES_GRAFICO = ['#00B4D8', '#0077B6', '#90E0EF', '#0096C7', '#48CAE4'];
-const COMISION_PARKIT = 0.15; // 15%
 
 export default function IngresosPage() {
   const { user } = useAuth();
@@ -97,6 +95,7 @@ export default function IngresosPage() {
     if (user) {
       loadData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, periodo]);
 
   const loadData = async () => {
@@ -151,20 +150,16 @@ export default function IngresosPage() {
         .eq('estacionamientos.propietario_id', user.id)
         .eq('estado', 'completada');
 
-      const ingresosMesActual = reservasMesActual?.reduce((sum, r: any) => 
-        sum + parseFloat(r.monto_estacionamiento?.toString() || '0'), 0) || 0;
-      
-      const comisionesMesActual = reservasMesActual?.reduce((sum, r: any) => 
-        sum + parseFloat(r.comision_parkit?.toString() || '0'), 0) || 0;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const parseMontoEst = (r: any) => parseFloat(r.monto_estacionamiento?.toString() || '0');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const parseComision = (r: any) => parseFloat(r.comision_parkit?.toString() || '0');
 
-      const ingresosMesAnterior = reservasMesAnterior?.reduce((sum, r: any) => 
-        sum + parseFloat(r.monto_estacionamiento?.toString() || '0'), 0) || 0;
-
-      const ingresosTotales = reservasTotales?.reduce((sum, r: any) => 
-        sum + parseFloat(r.monto_estacionamiento?.toString() || '0'), 0) || 0;
-
-      const comisionesTotales = reservasTotales?.reduce((sum, r: any) => 
-        sum + parseFloat(r.comision_parkit?.toString() || '0'), 0) || 0;
+      const ingresosMesActual = reservasMesActual?.reduce((sum, r) => sum + parseMontoEst(r), 0) || 0;
+      const comisionesMesActual = reservasMesActual?.reduce((sum, r) => sum + parseComision(r), 0) || 0;
+      const ingresosMesAnterior = reservasMesAnterior?.reduce((sum, r) => sum + parseMontoEst(r), 0) || 0;
+      const ingresosTotales = reservasTotales?.reduce((sum, r) => sum + parseMontoEst(r), 0) || 0;
+      const comisionesTotales = reservasTotales?.reduce((sum, r) => sum + parseComision(r), 0) || 0;
 
       setResumen({
         ingresos_totales: Math.round(ingresosTotales),
@@ -206,6 +201,7 @@ export default function IngresosPage() {
       }
 
       // Sumar ingresos y comisiones
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       reservasData?.forEach((reserva: any) => {
         const fecha = format(new Date(reserva.completada_en), 'yyyy-MM-dd');
         const monto = parseFloat(reserva.monto_estacionamiento?.toString() || '0');
@@ -252,8 +248,8 @@ export default function IngresosPage() {
           .eq('estacionamiento_id', est.id)
           .eq('estado', 'completada');
 
-        const totalIngresos = reservas?.reduce((sum, r: any) => 
-          sum + parseFloat(r.monto_estacionamiento?.toString() || '0'), 0) || 0;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const totalIngresos = reservas?.reduce((sum, r: any) => sum + parseFloat(r.monto_estacionamiento?.toString() || '0'), 0) || 0;
 
         ingresosPorEst.push({
           nombre: est.nombre,
@@ -292,6 +288,7 @@ export default function IngresosPage() {
         .order('completada_en', { ascending: false })
         .limit(20);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const transaccionesFormateadas: Transaccion[] = (reservasData || []).map((r: any) => {
         const monto = parseFloat(r.monto_estacionamiento?.toString() || '0');
         const comision = parseFloat(r.comision_parkit?.toString() || '0');
@@ -491,7 +488,7 @@ export default function IngresosPage() {
                 <YAxis style={{ fontSize: '12px' }} tickFormatter={(value) => `$${value}`} />
                 <Tooltip
                   formatter={(value: number, name: string) => {
-                    const labels: any = {
+                    const labels: Record<string, string> = {
                       ingresos: 'Ingresos Brutos',
                       comision: 'Comisión Parkit',
                       neto: 'Neto',

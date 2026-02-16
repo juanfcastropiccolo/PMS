@@ -73,6 +73,7 @@ export default function PerfilPage() {
     if (user) {
       loadUserProfile();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const loadUserProfile = async () => {
@@ -156,9 +157,9 @@ export default function PerfilPage() {
 
       setSuccess('Perfil actualizado exitosamente');
       toast.success('Perfil actualizado exitosamente');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating profile:', err);
-      setError(err.message || 'Error al actualizar el perfil');
+      setError(err instanceof Error ? err.message : 'Error al actualizar el perfil');
       toast.error('Error al actualizar el perfil');
     } finally {
       setLoading(false);
@@ -196,9 +197,9 @@ export default function PerfilPage() {
         newPassword: '',
         confirmPassword: '',
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating password:', err);
-      setError(err.message || 'Error al actualizar la contraseña');
+      setError(err instanceof Error ? err.message : 'Error al actualizar la contraseña');
     } finally {
       setLoading(false);
     }

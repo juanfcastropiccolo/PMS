@@ -39,6 +39,7 @@ export default function EstacionamientosPage() {
 
   useEffect(() => {
     loadEstacionamientos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const loadEstacionamientos = async () => {

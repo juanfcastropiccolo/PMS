@@ -6,7 +6,7 @@ export interface UserRoleData {
   id: string;
   user_id: string;
   role: UserRole;
-  permissions: any[];
+  permissions: unknown[];
   asignado_at: string;
 }
 

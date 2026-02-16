@@ -44,8 +44,8 @@ export default function LoginPage() {
     try {
       await signIn(email, password);
       toast.success('¡Bienvenido a Parkit PMS!');
-    } catch (err: any) {
-      const errorMessage = err.message || 'Error al iniciar sesión';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Error al iniciar sesión';
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -157,8 +157,8 @@ export default function LoginPage() {
             onClick={async () => {
               try {
                 await signInWithGoogle();
-              } catch (err: any) {
-                setError(err.message || 'Error al iniciar sesión con Google');
+              } catch (err: unknown) {
+                setError(err instanceof Error ? err.message : 'Error al iniciar sesión con Google');
               }
             }}
             sx={{

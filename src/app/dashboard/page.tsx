@@ -75,12 +75,14 @@ export default function DashboardPage() {
     if (user) {
       loadDashboardData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
     if (user && stats.totalEstacionamientos > 0) {
       loadIngresosDiarios();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, periodo, stats.totalEstacionamientos]);
 
   const loadDashboardData = async () => {
@@ -95,6 +97,7 @@ export default function DashboardPage() {
         .single();
 
       // Fallback: Si no hay nombre en public.users, buscar en auth metadata
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let nombreUsuario = (userData as any)?.nombre;
       
       if (!nombreUsuario) {
@@ -137,6 +140,7 @@ export default function DashboardPage() {
         .eq('estado', 'completada')
         .gte('completada_en', startOfMonth.toISOString());
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const ingresosMes = ingresoData?.reduce((sum, r: any) => sum + (parseFloat(r.monto_estacionamiento?.toString() || '0')), 0) || 0;
 
       // Get calificacion promedio
@@ -145,6 +149,7 @@ export default function DashboardPage() {
         .select('calificacion_promedio')
         .eq('propietario_id', user.id);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const calificaciones = estacionamientosData?.map((e: any) => parseFloat(e.calificacion_promedio?.toString() || '0')).filter(c => c > 0) || [];
       const calificacionPromedio = calificaciones.length > 0
         ? calificaciones.reduce((sum, c) => sum + c, 0) / calificaciones.length
@@ -193,6 +198,7 @@ export default function DashboardPage() {
       }
 
       // Sumar ingresos
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       reservasData?.forEach((reserva: any) => {
         const fecha = format(new Date(reserva.completada_en), 'yyyy-MM-dd');
         const monto = parseFloat(reserva.monto_estacionamiento?.toString() || '0');
@@ -232,6 +238,7 @@ export default function DashboardPage() {
         .order('created_at', { ascending: false })
         .limit(5);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const resenasFormateadas: Resena[] = (resenasData || []).map((r: any) => ({
         id: r.id,
         usuario_nombre: r.usuario?.nombre || 'Usuario anónimo',

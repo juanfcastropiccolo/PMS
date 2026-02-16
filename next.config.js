@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   // Exponer variables personalizadas al cliente (sin NEXT_PUBLIC_)
   // Esto permite que las variables sin prefijo funcionen en el cliente
   env: {

@@ -24,7 +24,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Alert,
 } from '@mui/material';
 import {
   Star as StarIcon,
@@ -64,7 +63,7 @@ export default function ResenasPage() {
   const [resenas, setResenas] = useState<Resena[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtroEstacionamiento, setFiltroEstacionamiento] = useState<string>('todos');
-  const [estacionamientos, setEstacionamientos] = useState<any[]>([]);
+  const [estacionamientos, setEstacionamientos] = useState<{ id: string; nombre: string }[]>([]);
   const [dialogAbierto, setDialogAbierto] = useState(false);
   const [resenaSeleccionada, setResenaSeleccionada] = useState<Resena | null>(null);
   const [respuesta, setRespuesta] = useState('');
@@ -72,6 +71,7 @@ export default function ResenasPage() {
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const loadData = async () => {
@@ -136,7 +136,7 @@ export default function ResenasPage() {
       toast.success('Respuesta enviada exitosamente');
       setDialogAbierto(false);
       loadData(); // Recargar datos
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error sending response:', error);
       toast.error('Error al enviar la respuesta');
     } finally {

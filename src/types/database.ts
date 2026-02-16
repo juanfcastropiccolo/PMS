@@ -3,6 +3,20 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export interface Database {
   public: {
     Tables: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      users: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      billetera_propietarios: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      cuentas_cobro: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      withdrawals: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      movimientos_billetera: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      reservas: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      resenas: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> };
       estacionamientos: {
         Row: {
           id: string;
@@ -245,7 +259,7 @@ export interface Database {
           propietario_telefono: string | null;
           fotos: Json | null;
           reservas_activas: number | null;
-          [key: string]: any;
+          [key: string]: unknown;
         };
       };
       v_dashboard_propietario: {

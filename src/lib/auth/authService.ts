@@ -8,7 +8,7 @@ export interface User {
     nombre?: string;
     telefono?: string;
     foto_perfil?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -97,7 +97,7 @@ export const authService = {
   },
 
   // Registro (solo propietarios)
-  async signUp(email: string, password: string, metadata: any) {
+  async signUp(email: string, password: string, metadata: Record<string, string>) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -169,7 +169,7 @@ export const authService = {
   },
 
   // Actualizar perfil
-  async updateProfile(metadata: any) {
+  async updateProfile(metadata: Record<string, unknown>) {
     const { error } = await supabase.auth.updateUser({
       data: metadata,
     });

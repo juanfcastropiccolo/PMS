@@ -80,9 +80,9 @@ export default function AvatarUpload({
       if (onAvatarUploaded) {
         onAvatarUploaded(finalUrl);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error uploading avatar:', error);
-      toast.error(`Error al subir la foto: ${error.message}`);
+      toast.error(`Error al subir la foto: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     } finally {
       setUploading(false);
     }

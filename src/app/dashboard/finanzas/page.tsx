@@ -35,6 +35,7 @@ export default function FinanzasPage() {
 
   useEffect(() => {
     loadFinanzas();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const loadFinanzas = async () => {

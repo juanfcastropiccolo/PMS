@@ -33,8 +33,8 @@ export default function UpdatePasswordPage() {
     try {
       await authService.updatePassword(password);
       router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Error al actualizar la contraseña.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error al actualizar la contraseña.');
     } finally {
       setLoading(false);
     }

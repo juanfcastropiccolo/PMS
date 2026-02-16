@@ -15,7 +15,6 @@ import {
   Divider,
   CircularProgress,
   Alert,
-  Avatar,
 } from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
@@ -41,7 +40,7 @@ interface Estacionamiento {
   precio_por_dia: number | null;
   precio_por_mes: number | null;
   moneda: string;
-  horario: any;
+  horario: Record<string, { abre: string; cierra: string; cerrado: boolean }>;
   abierto_24h: boolean;
   caracteristicas: string[];
   altura_maxima: number;
@@ -70,6 +69,7 @@ export default function EstacionamientoDetallePage() {
     if (id && user) {
       loadEstacionamiento();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, user]);
 
   const loadEstacionamiento = async () => {
@@ -78,14 +78,14 @@ export default function EstacionamientoDetallePage() {
         .from('estacionamientos')
         .select('*')
         .eq('id', id)
-        .eq('propietario_id', user?.id)
+        .eq('propietario_id', user!.id)
         .single();
 
       if (fetchError) throw fetchError;
       setEstacionamiento(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading estacionamiento:', err);
-      setError(err.message || 'Error al cargar el estacionamiento');
+      setError(err instanceof Error ? err.message : 'Error al cargar el estacionamiento');
     } finally {
       setLoading(false);
     }
@@ -427,7 +427,7 @@ export default function EstacionamientoDetallePage() {
                   </Typography>
                 ) : (
                   <Box>
-                    {Object.entries(estacionamiento.horario || {}).map(([dia, horario]: [string, any]) => (
+                    {Object.entries(estacionamiento.horario || {}).map(([dia, horario]) => (
                       <Box key={dia} sx={{ mb: 1 }}>
                         <Typography
                           variant="body2"

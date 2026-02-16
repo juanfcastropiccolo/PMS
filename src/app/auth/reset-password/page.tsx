@@ -30,8 +30,8 @@ export default function ResetPasswordPage() {
     try {
       await authService.resetPassword(email);
       setSuccess(true);
-    } catch (err: any) {
-      setError(err.message || 'Error al enviar el correo de recuperación.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error al enviar el correo de recuperación.');
     } finally {
       setLoading(false);
     }

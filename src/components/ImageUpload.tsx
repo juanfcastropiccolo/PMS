@@ -88,9 +88,9 @@ export default function ImageUpload({
 
       toast.success(`Foto de ${tipo} actualizada exitosamente`);
       onImageUploaded(finalUrl);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error uploading image:', error);
-      toast.error(`Error al subir la imagen: ${error.message}`);
+      toast.error(`Error al subir la imagen: ${error instanceof Error ? error.message : 'Error desconocido'}`);
       setPreviewUrl(currentImageUrl); // Revertir preview
     } finally {
       setUploading(false);

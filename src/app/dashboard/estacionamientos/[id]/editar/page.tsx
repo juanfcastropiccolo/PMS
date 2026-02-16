@@ -108,6 +108,7 @@ export default function EditarEstacionamientoPage() {
     if (id && user) {
       loadEstacionamiento();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, user]);
 
   const loadEstacionamiento = async () => {
@@ -116,7 +117,7 @@ export default function EditarEstacionamientoPage() {
         .from('estacionamientos')
         .select('*')
         .eq('id', id)
-        .eq('propietario_id', user?.id)
+        .eq('propietario_id', user!.id)
         .single();
 
       if (fetchError) throw fetchError;
@@ -150,22 +151,22 @@ export default function EditarEstacionamientoPage() {
           capacidad: data.capacidad || 1,
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading estacionamiento:', err);
-      setError(err.message || 'Error al cargar el estacionamiento');
+      setError(err instanceof Error ? err.message : 'Error al cargar el estacionamiento');
     } finally {
       setLoadingData(false);
     }
   };
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string | number | boolean | string[]) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handleHorarioChange = (dia: string, field: string, value: any) => {
+  const handleHorarioChange = (dia: string, field: string, value: string | boolean) => {
     setFormData((prev) => ({
       ...prev,
       horario: {
@@ -246,9 +247,9 @@ export default function EditarEstacionamientoPage() {
       setTimeout(() => {
         router.push(`/dashboard/estacionamientos/${id}`);
       }, 2000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating estacionamiento:', err);
-      setError(err.message || 'Error al actualizar el estacionamiento');
+      setError(err instanceof Error ? err.message : 'Error al actualizar el estacionamiento');
       toast.error('Error al actualizar el estacionamiento');
     } finally {
       setLoading(false);
