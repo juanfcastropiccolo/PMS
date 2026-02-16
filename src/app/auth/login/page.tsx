@@ -26,12 +26,16 @@ function LoginContent() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Verificar si hay error de acceso denegado desde el middleware
+  // Verificar si hay error desde URL (middleware o callback OAuth)
   useEffect(() => {
     const errorParam = searchParams.get('error');
     if (errorParam === 'no_access') {
       setError(
         'No tienes permisos para acceder al PMS. Este sistema es exclusivo para propietarios de estacionamientos registrados. Contacta al administrador para solicitar acceso.'
+      );
+    } else if (errorParam === 'oauth_failed') {
+      setError(
+        'No se pudo completar el inicio de sesión con Google. Verificá que el proveedor Google esté bien configurado en Supabase y en Google Cloud Console (redirect URI y Client Secret).'
       );
     }
   }, [searchParams]);

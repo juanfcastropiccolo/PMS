@@ -11,7 +11,7 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession();
 
   // Rutas públicas
-  const publicRoutes = ['/auth/login', '/auth/register', '/auth/reset-password'];
+  const publicRoutes = ['/auth/login', '/auth/register', '/auth/reset-password', '/auth/callback'];
   const isPublicRoute = publicRoutes.some((route) => req.nextUrl.pathname.startsWith(route));
 
   // Si no hay sesión y no es ruta pública, redirigir a login
