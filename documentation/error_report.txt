@@ -1,0 +1,207 @@
+
+11:15:12.399 Running build in Washington, D.C., USA (East) – iad1
+11:15:12.400 Build machine configuration: 2 cores, 8 GB
+11:15:12.515 Cloning github.com/juanfcastropiccolo/PMS (Branch: main, Commit: 0395d27)
+11:15:12.516 Previous build caches not available.
+11:15:12.727 Cloning completed: 212.000ms
+11:15:13.141 Running "vercel build"
+11:15:13.772 Vercel CLI 50.15.1
+11:15:14.091 Installing dependencies...
+11:15:17.148 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+11:15:17.984 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+11:15:18.755 npm warn deprecated domexception@4.0.0: Use your platform's native DOMException instead
+11:15:18.943 npm warn deprecated abab@2.0.6: Use your platform's native atob() and btoa() methods instead
+11:15:19.572 npm warn deprecated @supabase/auth-helpers-shared@0.7.0: This package is now deprecated - please use the @supabase/ssr package instead.
+11:15:19.743 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+11:15:19.823 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+11:15:20.245 npm warn deprecated @supabase/auth-helpers-nextjs@0.10.0: This package is now deprecated - please use the @supabase/ssr package instead.
+11:15:20.323 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+11:15:20.440 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+11:15:20.536 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+11:15:20.576 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+11:15:20.641 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+11:15:24.388 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+11:15:33.487 
+11:15:33.488 added 772 packages in 19s
+11:15:33.488 
+11:15:33.488 178 packages are looking for funding
+11:15:33.488   run `npm fund` for details
+11:15:33.980 Detected Next.js version: 14.2.35
+11:15:33.991 Running "npm run build"
+11:15:34.111 
+11:15:34.112 > parkit-pms@1.0.0 build
+11:15:34.113 > next build
+11:15:34.113 
+11:15:35.399 Attention: Next.js now collects completely anonymous telemetry regarding usage.
+11:15:35.400 This information is used to shape Next.js' roadmap and prioritize features.
+11:15:35.400 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+11:15:35.401 https://nextjs.org/telemetry
+11:15:35.401 
+11:15:35.527   ▲ Next.js 14.2.35
+11:15:35.528 
+11:15:35.548    Creating an optimized production build ...
+11:15:56.248 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (130kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+11:15:56.391  ⚠ Compiled with warnings
+11:15:56.391 
+11:15:56.392 ./node_modules/@supabase/realtime-js/dist/module/lib/websocket-factory.js
+11:15:56.392 A Node.js API is used (process.versions at line: 39) which is not supported in the Edge Runtime.
+11:15:56.392 Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+11:15:56.392 
+11:15:56.392 Import trace for requested module:
+11:15:56.392 ./node_modules/@supabase/realtime-js/dist/module/lib/websocket-factory.js
+11:15:56.393 ./node_modules/@supabase/realtime-js/dist/module/index.js
+11:15:56.393 ./node_modules/@supabase/supabase-js/dist/index.mjs
+11:15:56.393 ./node_modules/@supabase/auth-helpers-shared/dist/index.mjs
+11:15:56.393 ./node_modules/@supabase/auth-helpers-nextjs/dist/index.js
+11:15:56.393 
+11:15:56.393 ./node_modules/@supabase/supabase-js/dist/index.mjs
+11:15:56.393 A Node.js API is used (process.version at line: 395) which is not supported in the Edge Runtime.
+11:15:56.393 Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+11:15:56.393 
+11:15:56.393 Import trace for requested module:
+11:15:56.393 ./node_modules/@supabase/supabase-js/dist/index.mjs
+11:15:56.393 ./node_modules/@supabase/auth-helpers-shared/dist/index.mjs
+11:15:56.393 ./node_modules/@supabase/auth-helpers-nextjs/dist/index.js
+11:15:56.393 
+11:16:12.359  ✓ Compiled successfully
+11:16:12.360    Linting and checking validity of types ...
+11:16:17.121 
+11:16:17.122 Failed to compile.
+11:16:17.124 
+11:16:17.124 ./src/app/api/auth/check-role/route.ts
+11:16:17.124 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.124 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.124 
+11:16:17.124 ./src/app/auth/callback/route.ts
+11:16:17.124 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.124 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.125 
+11:16:17.125 ./src/app/auth/login/page.tsx
+11:16:17.125 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.125 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.125 
+11:16:17.125 ./src/app/auth/register/page.tsx
+11:16:17.125 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.125 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.125 
+11:16:17.125 ./src/app/auth/reset-password/page.tsx
+11:16:17.125 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.125 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.126 
+11:16:17.126 ./src/app/auth/update-password/page.tsx
+11:16:17.126 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.126 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.126 
+11:16:17.126 ./src/app/dashboard/cobros/page.tsx
+11:16:17.126 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.126 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.126 141:6  Warning: React Hook useEffect has a missing dependency: 'loadData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+11:16:17.127 
+11:16:17.130 ./src/app/dashboard/estacionamientos/[id]/editar/page.tsx
+11:16:17.130 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.130 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.131 111:6  Warning: React Hook useEffect has a missing dependency: 'loadEstacionamiento'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+11:16:17.133 
+11:16:17.133 ./src/app/dashboard/estacionamientos/[id]/page.tsx
+11:16:17.133 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.133 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.133 73:6  Warning: React Hook useEffect has a missing dependency: 'loadEstacionamiento'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+11:16:17.133 
+11:16:17.133 ./src/app/dashboard/estacionamientos/nuevo/page.tsx
+11:16:17.134 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.134 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.134 
+11:16:17.134 ./src/app/dashboard/estacionamientos/page.tsx
+11:16:17.134 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.134 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.134 42:6  Warning: React Hook useEffect has a missing dependency: 'loadEstacionamientos'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+11:16:17.134 
+11:16:17.134 ./src/app/dashboard/finanzas/page.tsx
+11:16:17.134 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.134 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.135 38:6  Warning: React Hook useEffect has a missing dependency: 'loadFinanzas'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+11:16:17.135 
+11:16:17.135 ./src/app/dashboard/ingresos/page.tsx
+11:16:17.135 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.135 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.135 100:6  Warning: React Hook useEffect has a missing dependency: 'loadData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+11:16:17.135 
+11:16:17.135 ./src/app/dashboard/layout.tsx
+11:16:17.135 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.135 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.135 
+11:16:17.135 ./src/app/dashboard/page.tsx
+11:16:17.135 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.136 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.136 78:6  Warning: React Hook useEffect has a missing dependency: 'loadDashboardData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+11:16:17.136 84:6  Warning: React Hook useEffect has a missing dependency: 'loadIngresosDiarios'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+11:16:17.136 
+11:16:17.136 ./src/app/dashboard/perfil/page.tsx
+11:16:17.136 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.136 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.136 76:6  Warning: React Hook useEffect has a missing dependency: 'loadUserProfile'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+11:16:17.136 
+11:16:17.136 ./src/app/dashboard/resenas/page.tsx
+11:16:17.136 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.136 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.137 75:6  Warning: React Hook useEffect has a missing dependency: 'loadData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+11:16:17.137 
+11:16:17.137 ./src/app/dashboard/reservas/page.tsx
+11:16:17.146 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.146 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.147 46:6  Warning: React Hook useEffect has a missing dependency: 'loadReservas'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+11:16:17.147 
+11:16:17.147 ./src/app/layout.tsx
+11:16:17.147 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.147 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.147 
+11:16:17.147 ./src/app/page.tsx
+11:16:17.147 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.147 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.147 
+11:16:17.147 ./src/components/AvatarUpload.tsx
+11:16:17.147 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.147 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.147 
+11:16:17.147 ./src/components/ImageUpload.tsx
+11:16:17.147 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.148 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.148 
+11:16:17.148 ./src/contexts/AuthContext.tsx
+11:16:17.148 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.148 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.148 
+11:16:17.148 ./src/lib/auth/authService.ts
+11:16:17.148 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.148 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.148 
+11:16:17.148 ./src/lib/auth/roleService.ts
+11:16:17.148 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.149 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.149 
+11:16:17.149 ./src/lib/env.ts
+11:16:17.149 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.149 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.149 
+11:16:17.149 ./src/lib/supabase.ts
+11:16:17.149 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.149 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.149 
+11:16:17.150 ./src/lib/supabaseClient.ts
+11:16:17.150 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.150 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.150 
+11:16:17.150 ./src/lib/theme.ts
+11:16:17.150 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.150 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.150 
+11:16:17.150 ./src/middleware.ts
+11:16:17.150 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.151 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.151 
+11:16:17.151 ./src/types/database.ts
+11:16:17.151 1:1  Error: Definition for rule '@typescript-eslint/no-explicit-any' was not found.  @typescript-eslint/no-explicit-any
+11:16:17.151 1:1  Error: Definition for rule '@typescript-eslint/no-unused-vars' was not found.  @typescript-eslint/no-unused-vars
+11:16:17.151 
+11:16:17.151 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+11:16:17.179 Error: Command "npm run build" exited with 1

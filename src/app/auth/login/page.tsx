@@ -12,13 +12,14 @@ import {
   Alert,
   Link as MuiLink,
   CircularProgress,
+  Divider,
 } from '@mui/material';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
-  const { signIn } = useAuth();
+  const { signIn, signInWithGoogle } = useAuth();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -144,6 +145,44 @@ export default function LoginPage() {
               {loading ? <CircularProgress size={24} color="inherit" /> : 'Iniciar Sesión'}
             </Button>
           </form>
+
+          {/* Divider */}
+          <Divider sx={{ my: 2 }}>o</Divider>
+
+          {/* Google Login */}
+          <Button
+            fullWidth
+            variant="outlined"
+            size="large"
+            onClick={async () => {
+              try {
+                await signInWithGoogle();
+              } catch (err: any) {
+                setError(err.message || 'Error al iniciar sesión con Google');
+              }
+            }}
+            sx={{
+              mb: 2,
+              borderColor: '#dadce0',
+              color: '#3c4043',
+              textTransform: 'none',
+              fontWeight: 500,
+              '&:hover': {
+                borderColor: '#d2e3fc',
+                bgcolor: '#f8faff',
+              },
+            }}
+            startIcon={
+              <Box
+                component="img"
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt="Google"
+                sx={{ width: 20, height: 20 }}
+              />
+            }
+          >
+            Iniciar sesión con Google
+          </Button>
 
           {/* Links */}
           <Box sx={{ textAlign: 'center' }}>
