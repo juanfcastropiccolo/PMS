@@ -63,12 +63,12 @@ export async function GET(request: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const admin = supabaseAdmin() as any;
 
-    // Upsert in mp_accounts_propietarios
+    // Upsert in mp_accounts_propietarios (DB column is user_id, not propietario_id)
     const { data: mpAccount, error: mpError } = await admin
       .from('mp_accounts_propietarios')
       .upsert(
         {
-          propietario_id: userId,
+          user_id: userId,
           mp_user_id: String(mpUser.id),
           mp_email: mpUser.email,
           access_token,
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
           token_expires_at: new Date(Date.now() + expires_in * 1000).toISOString(),
           is_active: true,
         },
-        { onConflict: 'propietario_id' }
+        { onConflict: 'user_id' }
       )
       .select('id')
       .single();

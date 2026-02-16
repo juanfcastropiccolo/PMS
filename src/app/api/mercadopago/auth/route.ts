@@ -17,7 +17,8 @@ export async function GET() {
     const { clientId, redirectUri } = env.mercadoPago;
 
     if (!clientId) {
-      return NextResponse.json({ error: 'MP_CLIENT_ID not configured' }, { status: 500 });
+      console.error('MP_CLIENT_ID not configured');
+      return NextResponse.redirect(new URL('/dashboard/cobros?mp_linked=error', env.app.url));
     }
 
     // Encode user ID in state for security
