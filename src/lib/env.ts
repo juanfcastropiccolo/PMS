@@ -13,6 +13,8 @@ export const env = {
   mercadoPago: {
     publicKey: process.env.MP_PUBLIC_KEY || '',
     accessToken: process.env.MP_ACCESS_TOKEN || '',
+    clientId: process.env.MP_CLIENT_ID || '',
+    clientSecret: process.env.MP_CLIENT_SECRET || '',
     redirectUri: process.env.NEXT_PUBLIC_MP_REDIRECT_URI || '',
     webhookSecret: process.env.MP_WEBHOOK_SECRET || '',
     webhookUrl: process.env.NEXT_PUBLIC_MP_WEBHOOK_URL || '',
