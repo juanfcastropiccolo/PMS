@@ -11,10 +11,22 @@ import {
   Button,
   Chip,
   CircularProgress,
+  IconButton,
 } from '@mui/material';
-import { LocalParking } from '@mui/icons-material';
+import {
+  LocalParking,
+  ChevronLeft,
+  ChevronRight,
+} from '@mui/icons-material';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
+
+interface FotoEstacionamiento {
+  id: string;
+  url: string;
+  orden: number;
+  es_principal: boolean;
+}
 
 interface Estacionamiento {
   id: string;
@@ -30,12 +42,14 @@ interface Estacionamiento {
   total_reservas: number;
   foto_portada_url: string | null;
   foto_perfil_url: string | null;
+  fotos_estacionamiento: FotoEstacionamiento[];
 }
 
 export default function EstacionamientosPage() {
   const { user } = useAuth();
   const [estacionamientos, setEstacionamientos] = useState<Estacionamiento[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState<Record<string, number>>({});
 
   useEffect(() => {
     loadEstacionamientos();
@@ -48,18 +62,50 @@ export default function EstacionamientosPage() {
     try {
       const { data, error } = await supabase
         .from('estacionamientos')
-        .select('id, nombre, direccion, tipo, capacidad, precio_hora, activo, verificado, estado_verificacion, calificacion_promedio, total_reservas, timestamp, foto_portada_url, foto_perfil_url')
+        .select('id, nombre, direccion, tipo, capacidad, precio_hora, activo, verificado, estado_verificacion, calificacion_promedio, total_reservas, timestamp, foto_portada_url, foto_perfil_url, fotos_estacionamiento(id, url, orden, es_principal)')
         .eq('propietario_id', user.id)
         .eq('es_marketplace', true)
         .order('timestamp', { ascending: false });
 
       if (error) throw error;
-      setEstacionamientos(data || []);
+
+      // Sort photos by orden for each estacionamiento
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const sorted = (data || []).map((est: any) => ({
+        ...est,
+        fotos_estacionamiento: (est.fotos_estacionamiento || []).sort(
+          (a: FotoEstacionamiento, b: FotoEstacionamiento) => a.orden - b.orden
+        ),
+      }));
+
+      setEstacionamientos(sorted as Estacionamiento[]);
     } catch (error) {
       console.error('Error loading estacionamientos:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const getPhotos = (est: Estacionamiento): string[] => {
+    return est.fotos_estacionamiento.map((f) => f.url).filter(Boolean);
+  };
+
+  const handlePrevPhoto = (estId: string, totalPhotos: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentPhotoIndex((prev) => ({
+      ...prev,
+      [estId]: ((prev[estId] || 0) - 1 + totalPhotos) % totalPhotos,
+    }));
+  };
+
+  const handleNextPhoto = (estId: string, totalPhotos: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentPhotoIndex((prev) => ({
+      ...prev,
+      [estId]: ((prev[estId] || 0) + 1) % totalPhotos,
+    }));
   };
 
   const getEstadoChip = (estado: string) => {
@@ -121,38 +167,107 @@ export default function EstacionamientosPage() {
       ) : (
         <Grid container spacing={3}>
           {estacionamientos.map((estacionamiento) => {
+            const photos = getPhotos(estacionamiento);
+            const currentIndex = currentPhotoIndex[estacionamiento.id] || 0;
+            const currentPhoto = photos[currentIndex];
+            const hasPhotos = photos.length > 0;
+            const hasMultiplePhotos = photos.length > 1;
+
             return (
               <Grid item xs={12} sm={6} md={4} key={estacionamiento.id}>
                 <Card sx={{ overflow: 'hidden', transition: 'transform 0.2s, box-shadow 0.2s', '&:hover': { transform: 'translateY(-4px)', boxShadow: 4 } }}>
-                  {/* Imagen de Portada con Foto de Perfil */}
+                  {/* Imagen con Carousel */}
                   <Box sx={{ position: 'relative', height: 240 }}>
-                    {/* Portada */}
                     <Box
                       sx={{
                         width: '100%',
                         height: '100%',
-                        background: estacionamiento.foto_portada_url
-                          ? `url(${estacionamiento.foto_portada_url})`
-                          : 'linear-gradient(135deg, #00B4D8 0%, #0077B6 100%)',
+                        background: currentPhoto
+                          ? `url(${currentPhoto})`
+                          : estacionamiento.foto_portada_url
+                            ? `url(${estacionamiento.foto_portada_url})`
+                            : 'linear-gradient(135deg, #00B4D8 0%, #0077B6 100%)',
                         backgroundSize: 'cover',
-                        backgroundPosition: 'center 35%', // Posición estratégica para no cortar mucho
+                        backgroundPosition: 'center 35%',
                         backgroundRepeat: 'no-repeat',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}
                     >
-                      {/* Ícono placeholder si no hay foto */}
-                      {!estacionamiento.foto_portada_url && (
-                        <LocalParking 
-                          sx={{ 
-                            fontSize: 80, 
-                            color: 'rgba(255, 255, 255, 0.3)' 
-                          }} 
+                      {!hasPhotos && !estacionamiento.foto_portada_url && (
+                        <LocalParking
+                          sx={{
+                            fontSize: 80,
+                            color: 'rgba(255, 255, 255, 0.3)',
+                          }}
                         />
                       )}
                     </Box>
-                    
+
+                    {/* Flechas del carousel */}
+                    {hasMultiplePhotos && (
+                      <>
+                        <IconButton
+                          onClick={(e) => handlePrevPhoto(estacionamiento.id, photos.length, e)}
+                          sx={{
+                            position: 'absolute',
+                            left: 4,
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            bgcolor: 'rgba(255, 255, 255, 0.85)',
+                            width: 32,
+                            height: 32,
+                            '&:hover': { bgcolor: 'white' },
+                            boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
+                          }}
+                        >
+                          <ChevronLeft fontSize="small" />
+                        </IconButton>
+                        <IconButton
+                          onClick={(e) => handleNextPhoto(estacionamiento.id, photos.length, e)}
+                          sx={{
+                            position: 'absolute',
+                            right: 4,
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            bgcolor: 'rgba(255, 255, 255, 0.85)',
+                            width: 32,
+                            height: 32,
+                            '&:hover': { bgcolor: 'white' },
+                            boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
+                          }}
+                        >
+                          <ChevronRight fontSize="small" />
+                        </IconButton>
+
+                        {/* Indicador de posición */}
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            bottom: 8,
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            display: 'flex',
+                            gap: 0.5,
+                          }}
+                        >
+                          {photos.map((_, idx) => (
+                            <Box
+                              key={idx}
+                              sx={{
+                                width: 6,
+                                height: 6,
+                                borderRadius: '50%',
+                                bgcolor: idx === currentIndex ? 'white' : 'rgba(255,255,255,0.5)',
+                                transition: 'background-color 0.2s',
+                              }}
+                            />
+                          ))}
+                        </Box>
+                      </>
+                    )}
+
                     {/* Foto de Perfil (pequeña, esquina inferior izquierda) */}
                     {estacionamiento.foto_perfil_url && (
                       <Box
@@ -244,4 +359,3 @@ export default function EstacionamientosPage() {
     </Box>
   );
 }
-

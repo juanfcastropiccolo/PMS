@@ -62,6 +62,7 @@ export default function EstacionamientoDetallePage() {
   const [estacionamiento, setEstacionamiento] = useState<Estacionamiento | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [fotos, setFotos] = useState<{ url: string; orden: number }[]>([]);
 
   const id = params.id as string;
 
@@ -74,15 +75,23 @@ export default function EstacionamientoDetallePage() {
 
   const loadEstacionamiento = async () => {
     try {
-      const { data, error: fetchError } = await supabase
-        .from('estacionamientos')
-        .select('*')
-        .eq('id', id)
-        .eq('propietario_id', user!.id)
-        .single();
+      const [{ data, error: fetchError }, { data: fotosData }] = await Promise.all([
+        supabase
+          .from('estacionamientos')
+          .select('*')
+          .eq('id', id)
+          .eq('propietario_id', user!.id)
+          .single(),
+        supabase
+          .from('fotos_estacionamiento')
+          .select('url, orden')
+          .eq('estacionamiento_id', id)
+          .order('orden', { ascending: true }),
+      ]);
 
       if (fetchError) throw fetchError;
       setEstacionamiento(data);
+      setFotos(fotosData || []);
     } catch (err: unknown) {
       console.error('Error loading estacionamiento:', err);
       setError(err instanceof Error ? err.message : 'Error al cargar el estacionamiento');
@@ -145,7 +154,7 @@ export default function EstacionamientoDetallePage() {
         {/* Foto de Portada */}
         <Box sx={{ position: 'relative', height: 400, bgcolor: '#f0f2f5' }}>
           <ImageUpload
-            currentImageUrl={estacionamiento.foto_portada_url}
+            currentImageUrl={estacionamiento.foto_portada_url || fotos[1]?.url || fotos[0]?.url || null}
             onImageUploaded={(url) => handleImageUploaded(url, 'portada')}
             userId={user?.id || ''}
             estacionamientoId={estacionamiento.id}
@@ -187,7 +196,7 @@ export default function EstacionamientoDetallePage() {
               }}
             >
               <ImageUpload
-                currentImageUrl={estacionamiento.foto_perfil_url}
+                currentImageUrl={estacionamiento.foto_perfil_url || fotos[0]?.url || null}
                 onImageUploaded={(url) => handleImageUploaded(url, 'perfil')}
                 userId={user?.id || ''}
                 estacionamientoId={estacionamiento.id}
