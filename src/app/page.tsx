@@ -26,6 +26,9 @@ import {
 import { useTheme } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MenuIcon from '@mui/icons-material/Menu';
+import dynamic from 'next/dynamic';
+
+const Ribbons = dynamic(() => import('@/components/Ribbons'), { ssr: false });
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 
@@ -167,6 +170,32 @@ export default function LandingPage() {
 
   return (
     <Box sx={{ overflowX: 'hidden', bgcolor: '#fff' }}>
+      {/* Ribbons overlay */}
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 9999,
+          pointerEvents: 'none',
+          overflow: 'hidden',
+          '& canvas': {
+            pointerEvents: 'none',
+          },
+        }}
+      >
+        <Ribbons
+          baseThickness={30}
+          colors={['#0077B6', '#00B4D8', '#90E0EF']}
+          speedMultiplier={0.5}
+          maxAge={500}
+          enableFade={false}
+          enableShaderEffect={false}
+        />
+      </Box>
+
       {/* Navbar */}
       <AppBar
         position="fixed"
@@ -178,7 +207,17 @@ export default function LandingPage() {
             sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            <Image src="/logo_parkit.png" alt="Parkit" width={120} height={40} style={{ objectFit: 'contain' }} />
+            <Image src="/logo_parkit.png" alt="Parkit" width={40} height={40} style={{ objectFit: 'contain' }} />
+            <Typography
+              sx={{
+                fontWeight: 700,
+                fontSize: '1.3rem',
+                color: theme.palette.primary.dark,
+                ml: 0.5,
+              }}
+            >
+              parkit
+            </Typography>
           </Box>
 
           {isMobile ? (
@@ -213,27 +252,44 @@ export default function LandingPage() {
           ) : (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
               {navLinks.map((link) => (
-                <MuiLink
+                <Box
                   key={link.href}
                   component="button"
                   onClick={() => scrollTo(link.href.replace('#', ''))}
                   sx={{
-                    fontSize: '0.95rem',
+                    fontSize: '0.9rem',
                     fontWeight: 500,
                     color: theme.palette.text.primary,
-                    '&:hover': { color: theme.palette.primary.main },
+                    border: '1px solid',
+                    borderColor: 'grey.300',
+                    borderRadius: '20px',
+                    px: 2,
+                    py: 0.75,
+                    bgcolor: 'transparent',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      borderColor: theme.palette.primary.main,
+                      color: theme.palette.primary.main,
+                      bgcolor: 'rgba(0,119,182,0.04)',
+                    },
                   }}
                 >
                   {link.label}
-                </MuiLink>
+                </Box>
               ))}
               <Tooltip title="Muy pronto vas a poder acceder a tu cuenta desde acá 😉" arrow>
                 <Box
                   component="span"
                   sx={{
-                    fontSize: '0.95rem',
+                    fontSize: '0.9rem',
                     fontWeight: 500,
-                    color: 'grey.500',
+                    color: 'grey.400',
+                    border: '1px solid',
+                    borderColor: 'grey.200',
+                    borderRadius: '20px',
+                    px: 2,
+                    py: 0.75,
                     cursor: 'not-allowed',
                     userSelect: 'none',
                   }}
@@ -376,7 +432,12 @@ export default function LandingPage() {
                 alt="Parkit - Estacioná sin vueltas"
                 width={500}
                 height={500}
-                style={{ objectFit: 'contain', width: '100%', height: 'auto' }}
+                style={{
+                  objectFit: 'cover',
+                  width: '100%',
+                  height: 'auto',
+                  borderRadius: '24px',
+                }}
                 priority
               />
             </Box>
@@ -476,8 +537,17 @@ export default function LandingPage() {
             gap: 2,
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Image src="/logo_parkit.png" alt="Parkit" width={100} height={33} style={{ objectFit: 'contain' }} />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Image src="/logo_parkit.png" alt="Parkit" width={33} height={33} style={{ objectFit: 'contain' }} />
+            <Typography
+              sx={{
+                fontWeight: 700,
+                fontSize: '1.2rem',
+                color: '#fff',
+              }}
+            >
+              parkit
+            </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', gap: 3 }}>
