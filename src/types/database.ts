@@ -187,6 +187,21 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['audit_log']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['audit_log']['Insert']>;
       };
+      early_birds: {
+        Row: {
+          id: string;
+          email: string;
+          created_at: string;
+        };
+        Insert: {
+          email: string;
+          id?: string;
+          created_at?: string;
+        };
+        Update: {
+          email?: string;
+        };
+      };
       mp_accounts_propietarios: {
         Row: {
           id: string;

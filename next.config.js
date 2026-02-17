@@ -4,6 +4,15 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'hldpjshvcwlyjmqmugrf.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
+  },
   // Exponer variables personalizadas al cliente (sin NEXT_PUBLIC_)
   // Esto permite que las variables sin prefijo funcionen en el cliente
   env: {
