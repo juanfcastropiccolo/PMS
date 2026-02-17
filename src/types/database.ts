@@ -36,6 +36,7 @@ export interface Database {
         };
         Insert: Omit<Database['public']['Tables']['fotos_estacionamiento']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['fotos_estacionamiento']['Insert']>;
+        Relationships: [];
       };
       reservas_estacionamiento: {
         Row: {
@@ -73,6 +74,7 @@ export interface Database {
         };
         Insert: Omit<Database['public']['Tables']['reservas_estacionamiento']['Row'], 'id' | 'created_at' | 'updated_at' | 'duracion_horas' | 'monto_propietario'>;
         Update: Partial<Database['public']['Tables']['reservas_estacionamiento']['Insert']>;
+        Relationships: [];
       };
       kyc_submissions: {
         Row: {
@@ -110,6 +112,7 @@ export interface Database {
         };
         Insert: Omit<Database['public']['Tables']['kyc_submissions']['Row'], 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Database['public']['Tables']['kyc_submissions']['Insert']>;
+        Relationships: [];
       };
       user_roles: {
         Row: {
@@ -123,6 +126,7 @@ export interface Database {
         };
         Insert: Omit<Database['public']['Tables']['user_roles']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['user_roles']['Insert']>;
+        Relationships: [];
       };
       resenas_estacionamiento: {
         Row: {
@@ -148,6 +152,7 @@ export interface Database {
         };
         Insert: Omit<Database['public']['Tables']['resenas_estacionamiento']['Row'], 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Database['public']['Tables']['resenas_estacionamiento']['Insert']>;
+        Relationships: [];
       };
       notificaciones: {
         Row: {
@@ -167,6 +172,7 @@ export interface Database {
         };
         Insert: Omit<Database['public']['Tables']['notificaciones']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['notificaciones']['Insert']>;
+        Relationships: [];
       };
       audit_log: {
         Row: {
@@ -186,21 +192,29 @@ export interface Database {
         };
         Insert: Omit<Database['public']['Tables']['audit_log']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['audit_log']['Insert']>;
+        Relationships: [];
       };
       early_birds: {
         Row: {
           id: string;
           email: string;
+          nombre_apellido: string;
+          telefono: string;
           created_at: string;
         };
         Insert: {
           email: string;
+          nombre_apellido: string;
+          telefono: string;
           id?: string;
           created_at?: string;
         };
         Update: {
           email?: string;
+          nombre_apellido?: string;
+          telefono?: string;
         };
+        Relationships: [];
       };
       mp_accounts_propietarios: {
         Row: {
@@ -218,6 +232,7 @@ export interface Database {
         };
         Insert: Omit<Database['public']['Tables']['mp_accounts_propietarios']['Row'], 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Database['public']['Tables']['mp_accounts_propietarios']['Insert']>;
+        Relationships: [];
       };
     };
     Views: {
@@ -233,6 +248,7 @@ export interface Database {
           reservas_activas: number | null;
           [key: string]: unknown;
         };
+        Relationships: [];
       };
       v_dashboard_propietario: {
         Row: {
@@ -246,6 +262,7 @@ export interface Database {
           ingresos_ultimo_mes: number;
           calificacion_promedio_general: number;
         };
+        Relationships: [];
       };
       v_dashboard_admin: {
         Row: {
@@ -260,6 +277,7 @@ export interface Database {
           comisiones_totales: number;
           calificacion_promedio_plataforma: number;
         };
+        Relationships: [];
       };
     };
     Functions: {};
