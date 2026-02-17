@@ -4,6 +4,16 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Reducir uso de file watchers en dev (evita EMFILE en macOS)
+  webpack: (config, { dev }) => {
+    if (dev) {
+      config.watchOptions = {
+        ignored: ['**/node_modules', '**/.git', '**/.next'],
+        aggregateTimeout: 300,
+      };
+    }
+    return config;
+  },
   images: {
     remotePatterns: [
       {

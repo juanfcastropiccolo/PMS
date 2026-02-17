@@ -120,6 +120,8 @@ function scrollTo(id: string) {
 export default function LandingPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [nombreApellido, setNombreApellido] = useState('');
+  const [telefono, setTelefono] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -134,6 +136,14 @@ export default function LandingPage() {
     e.preventDefault();
     setMessage(null);
 
+    if (!nombreApellido.trim()) {
+      setMessage({ type: 'error', text: 'Ingresá tu nombre y apellido.' });
+      return;
+    }
+    if (!telefono.trim()) {
+      setMessage({ type: 'error', text: 'Ingresá tu teléfono.' });
+      return;
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setMessage({ type: 'error', text: 'Por favor ingresá un email válido.' });
@@ -145,7 +155,7 @@ export default function LandingPage() {
       const res = await fetch('/api/early-birds', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, nombre_apellido: nombreApellido, telefono }),
       });
       const data = await res.json();
 
@@ -154,6 +164,8 @@ export default function LandingPage() {
           type: 'success',
           text: '¡Tu correo fue registrado! Estate atento a las novedades, te vamos a avisar cuando lancemos.',
         });
+        setNombreApellido('');
+        setTelefono('');
         setEmail('');
       } else {
         setMessage({ type: 'error', text: data.error || 'Ocurrió un error. Intentá de nuevo.' });
@@ -328,12 +340,44 @@ export default function LandingPage() {
                 onSubmit={handleSubmit}
                 sx={{
                   display: 'flex',
-                  flexDirection: { xs: 'column', sm: 'row' },
+                  flexDirection: 'column',
                   gap: 1.5,
                   maxWidth: 500,
                   mx: { xs: 'auto', md: 0 },
                 }}
               >
+                <TextField
+                  type="text"
+                  placeholder="Tu nombre y apellido"
+                  value={nombreApellido}
+                  onChange={(e) => setNombreApellido(e.target.value)}
+                  size="medium"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      bgcolor: '#fff',
+                      borderRadius: 2,
+                      '& fieldset': { borderColor: 'transparent' },
+                      '&:hover fieldset': { borderColor: theme.palette.primary.light },
+                      '&.Mui-focused fieldset': { borderColor: theme.palette.primary.light },
+                    },
+                  }}
+                />
+                <TextField
+                  type="tel"
+                  placeholder="Tu teléfono"
+                  value={telefono}
+                  onChange={(e) => setTelefono(e.target.value)}
+                  size="medium"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      bgcolor: '#fff',
+                      borderRadius: 2,
+                      '& fieldset': { borderColor: 'transparent' },
+                      '&:hover fieldset': { borderColor: theme.palette.primary.light },
+                      '&.Mui-focused fieldset': { borderColor: theme.palette.primary.light },
+                    },
+                  }}
+                />
                 <TextField
                   type="email"
                   placeholder="Tu email"
@@ -341,7 +385,6 @@ export default function LandingPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   size="medium"
                   sx={{
-                    flex: 1,
                     '& .MuiOutlinedInput-root': {
                       bgcolor: '#fff',
                       borderRadius: 2,
@@ -354,15 +397,14 @@ export default function LandingPage() {
                 <Button
                   type="submit"
                   variant="contained"
+                  fullWidth
                   disabled={loading}
                   sx={{
                     bgcolor: '#00B4D8',
                     color: '#fff',
                     fontWeight: 700,
-                    px: 3,
                     py: 1.5,
                     fontSize: '0.95rem',
-                    whiteSpace: 'nowrap',
                     '&:hover': { bgcolor: '#0096C7' },
                   }}
                 >
