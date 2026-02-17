@@ -26,9 +26,6 @@ import {
 import { useTheme } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MenuIcon from '@mui/icons-material/Menu';
-import dynamic from 'next/dynamic';
-
-const Ribbons = dynamic(() => import('@/components/Ribbons'), { ssr: false });
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 
@@ -170,32 +167,6 @@ export default function LandingPage() {
 
   return (
     <Box sx={{ overflowX: 'hidden', bgcolor: '#fff' }}>
-      {/* Ribbons overlay */}
-      <Box
-        sx={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: 9999,
-          pointerEvents: 'none',
-          overflow: 'hidden',
-          '& canvas': {
-            pointerEvents: 'none',
-          },
-        }}
-      >
-        <Ribbons
-          baseThickness={30}
-          colors={['#0077B6', '#00B4D8', '#90E0EF']}
-          speedMultiplier={0.5}
-          maxAge={500}
-          enableFade={false}
-          enableShaderEffect={false}
-        />
-      </Box>
-
       {/* Navbar */}
       <AppBar
         position="fixed"
@@ -348,7 +319,7 @@ export default function LandingPage() {
                   lineHeight: 1.6,
                 }}
               >
-                Encontrá estacionamiento en la calle, en playas privadas o cocheras cerca tuyo.
+                Pronto vas a poder encontrar estacionamiento en la calle, en playas privadas o cocheras cerca tuyo.
                 Todo en un solo lugar, rápido y simple.
               </Typography>
 
