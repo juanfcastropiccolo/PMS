@@ -11,8 +11,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Parkit PMS - Sistema de Gestión de Estacionamientos',
-  description: 'Plataforma de gestión para propietarios de estacionamientos',
+  title: 'Parkit - Estacioná rápido y sin vueltas',
   keywords: ['parkit', 'estacionamiento', 'parking', 'gestión', 'pms'],
 };
 
