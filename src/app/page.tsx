@@ -128,7 +128,7 @@ export default function LandingPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const heroImage = useMemo(() => {
-    const variant = Math.random() > 0.5 ? 'landing_page_hombre' : 'landing_page_mujer_nueva';
+    const variant = Math.random() > 0.5 ? 'landing_page_hombre_nueva' : 'landing_page_mujer_nueva';
     return `${SUPABASE_URL}/storage/v1/object/public/branding/${variant}.png`;
   }, []);
 
