@@ -160,6 +160,14 @@ export default function LandingPage() {
       const data = await res.json();
 
       if (res.ok) {
+        // Notificar n8n (fire-and-forget)
+        const primerNombre = nombreApellido.trim().split(/\s+/)[0];
+        fetch('https://energia.app.n8n.cloud/webhook/fa23033b-2571-4804-9854-b8f6d5ebf16b', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, nombre: primerNombre }),
+        }).catch(() => {});
+
         setMessage({
           type: 'success',
           text: '¡Tu correo fue registrado! Estate atento a las novedades, te vamos a avisar cuando lancemos.',
