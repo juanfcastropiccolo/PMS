@@ -428,8 +428,8 @@ export default function LandingPage() {
                     borderRadius: 2,
                     maxWidth: 500,
                     mx: { xs: 'auto', md: 0 },
-                    bgcolor: message.type === 'success' ? '#eeb3b2' : 'error.light',
-                    color: message.type === 'success' ? '#333' : 'error.contrastText',
+                    bgcolor: message.type === 'success' ? 'success.light' : 'error.light',
+                    color: message.type === 'success' ? 'success.contrastText' : 'error.contrastText',
                   }}
                 >
                   <Typography variant="body2" fontWeight={500}>
