@@ -571,7 +571,7 @@ export default function LandingPage() {
             </Typography>
           </Box>
 
-          <Box sx={{ display: 'flex', gap: 3 }}>
+          <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', justifyContent: 'center' }}>
             {navLinks.map((link) => (
               <MuiLink
                 key={link.href}
@@ -586,6 +586,16 @@ export default function LandingPage() {
                 {link.label}
               </MuiLink>
             ))}
+            <MuiLink
+              href="/privacidad"
+              sx={{
+                color: 'rgba(255,255,255,0.8)',
+                fontSize: '0.9rem',
+                '&:hover': { color: '#fff' },
+              }}
+            >
+              Privacidad
+            </MuiLink>
           </Box>
 
           <Typography variant="body2" sx={{ opacity: 0.6 }}>
