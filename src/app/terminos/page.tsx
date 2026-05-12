@@ -3,14 +3,14 @@ import LegalDocPage from '@/components/legal/LegalDocPage';
 import { getLegalDocMeta, readLegalDoc } from '@/lib/legalDocs';
 
 export const metadata: Metadata = {
-  title: 'Política de Privacidad — Parkit',
+  title: 'Términos y Condiciones — Parkit',
   description:
-    'Política de Privacidad de Parkit. Cómo recolectamos, usamos y protegemos tus datos personales conforme a la Ley 25.326 de la República Argentina.',
+    'Términos y Condiciones de uso de Parkit. Reglas del marketplace de estacionamientos, reservas, pagos, cancelaciones y reembolsos.',
 };
 
-export default function PrivacidadPage() {
-  const meta = getLegalDocMeta('privacidad');
-  const content = readLegalDoc('privacidad');
+export default function TerminosPage() {
+  const meta = getLegalDocMeta('terminos');
+  const content = readLegalDoc('terminos');
   return (
     <LegalDocPage
       title={meta.title}
