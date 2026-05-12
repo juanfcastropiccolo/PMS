@@ -11,7 +11,7 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession();
 
   // Rutas públicas
-  const publicRoutes = ['/', '/privacidad', '/auth/login', '/auth/register', '/auth/reset-password', '/auth/callback'];
+  const publicRoutes = ['/', '/privacidad', '/terminos', '/auth/login', '/auth/register', '/auth/reset-password', '/auth/callback'];
   const isPublicRoute = publicRoutes.some((route) =>
     route === '/' ? req.nextUrl.pathname === '/' : req.nextUrl.pathname.startsWith(route)
   );
