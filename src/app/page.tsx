@@ -596,6 +596,16 @@ export default function LandingPage() {
             >
               Privacidad
             </MuiLink>
+            <MuiLink
+              href="/terminos"
+              sx={{
+                color: 'rgba(255,255,255,0.8)',
+                fontSize: '0.9rem',
+                '&:hover': { color: '#fff' },
+              }}
+            >
+              Términos y condiciones
+            </MuiLink>
           </Box>
 
           <Typography variant="body2" sx={{ opacity: 0.6 }}>

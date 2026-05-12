@@ -279,7 +279,7 @@ export default function LegalDocPage({ title, lastUpdated, content }: Props) {
               href="/terminos"
               sx={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', '&:hover': { color: '#fff' } }}
             >
-              Términos
+              Términos y condiciones
             </MuiLink>
           </Box>
 

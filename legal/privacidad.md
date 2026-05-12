@@ -1,7 +1,6 @@
 # Política de Privacidad de Parkit
 
-**Última actualización:** 12 de mayo de 2026  
-**Versión:** 2.0 — borrador legal reforzado  
+**Última actualización:** 12 de mayo de 2026
 **Ámbito territorial principal:** República Argentina
 
 ## 1. Identidad del responsable del tratamiento
